@@ -7,8 +7,11 @@ import Sidebar, { SidebarOverlay } from '@layout/AdminLayout/Sidebar/Sidebar'
 import Header from '@layout/AdminLayout/Header/Header'
 import Footer from '@layout/AdminLayout/Footer/Footer'
 import { Container } from 'react-bootstrap'
+import { useSession } from 'next-auth/react'
 
 export default function AdminLayout({ children }: PropsWithChildren) {
+  useSession({ required: true })
+
   // Show status for xs screen
   const [isShowSidebar, setIsShowSidebar] = useState(false)
 

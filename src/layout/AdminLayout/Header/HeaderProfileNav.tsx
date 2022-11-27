@@ -17,6 +17,7 @@ import {
   faGear, faListCheck, faLock, faPowerOff,
 } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 type NavItemProps = {
   icon: IconDefinition;
@@ -34,6 +35,8 @@ const ProfileDropdownItem = (props: NavItemProps) => {
 }
 
 export default function HeaderProfileNav() {
+  const { data: session } = useSession()
+
   return (
     <Nav>
       <Dropdown as={NavItem}>
@@ -42,8 +45,8 @@ export default function HeaderProfileNav() {
             <Image
               fill
               className="rounded-circle"
-              src="/assets/img/avatars/8.jpg"
-              alt="user@email.com"
+              src={session?.user?.image || ''}
+              alt={session?.user?.email || ''}
             />
           </div>
         </Dropdown.Toggle>
@@ -111,7 +114,10 @@ export default function HeaderProfileNav() {
               <ProfileDropdownItem icon={faLock}>Lock Account</ProfileDropdownItem>
             </Dropdown.Item>
           </Link>
-          <Link href="/login" passHref legacyBehavior>
+          {/* <Link href="#" passHref legacyBehavior 
+            onClick={(e) => { e.preventDefault(); signOut({ callbackUrl: '/api/auth/signout' }) }}>
+          */}
+          <Link href="/api/auth/signout" passHref legacyBehavior>
             <Dropdown.Item>
               <ProfileDropdownItem icon={faPowerOff}>Logout</ProfileDropdownItem>
             </Dropdown.Item>
