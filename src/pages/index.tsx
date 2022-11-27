@@ -1373,6 +1373,4 @@ const Home: NextPage = () => {
   )
 }
 
-Home.auth = true
-
 export default Home
