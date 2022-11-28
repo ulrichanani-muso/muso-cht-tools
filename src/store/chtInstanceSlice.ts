@@ -24,10 +24,13 @@ export const chtInstanceSlice = createSlice({
   name: 'chtInstance',
   initialState,
   reducers: {
-    setInstance: (state, action: PayloadAction<number>) => {
+    setCurrentInstance: (state, action: PayloadAction<number>) => {
       state.current = state.instances.find((i) => i.id === action.payload) || null
     },
-    unsetInstance: (state) => {
+    setInstances: (state, action: PayloadAction<ChtInstance[]>) => {
+      state.instances = action.payload
+    },
+    unsetCurrentInstance: (state) => {
       state.current = null
     },
   },
@@ -36,7 +39,7 @@ export const chtInstanceSlice = createSlice({
 // export const currentInstance = (state: RootState) => state.chtInstance.current
 
 export const {
-  setInstance, unsetInstance,
+  setCurrentInstance, unsetCurrentInstance, setInstances
 } = chtInstanceSlice.actions
 
 export default chtInstanceSlice.reducer

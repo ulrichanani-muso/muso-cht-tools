@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Nav } from 'react-bootstrap'
+import ChtInstanceSelector from 'src/components/ChtInstance/ChtInstanceSelector'
 
 export default function HeaderFeaturedNav() {
   return (
@@ -18,6 +19,9 @@ export default function HeaderFeaturedNav() {
         <Link href="/" passHref legacyBehavior>
           <Nav.Link className="p-2">Settings</Nav.Link>
         </Link>
+      </Nav.Item>
+      <Nav.Item>
+        <ChtInstanceSelector />
       </Nav.Item>
     </Nav>
   )
