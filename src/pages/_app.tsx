@@ -6,7 +6,9 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import { SSRProvider } from 'react-bootstrap'
 import { SessionProvider } from 'next-auth/react'
+import { Provider } from 'react-redux'
 import Auth from 'src/components/Auth'
+import { store } from '../store'
 
 // You change this configuration value to false so that the Font Awesome core SVG library
 // will not try and insert <style> elements into the <head> of the page.
@@ -21,15 +23,17 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   // eslint-disable-next-line react/jsx-props-no-spreading
   return (
     <SSRProvider>
-      <SessionProvider session={session}>
-        {Component.auth ? (
-          <Auth>
+      <Provider store={store}>
+        <SessionProvider session={session}>
+          {Component.auth ? (
+            <Auth>
+              <Component {...pageProps} />
+            </Auth>
+          ) : (
             <Component {...pageProps} />
-          </Auth>
-        ) : (
-          <Component {...pageProps} />
-        )}
-      </SessionProvider>
+          )}
+        </SessionProvider>
+      </Provider>
     </SSRProvider>
   )
 }

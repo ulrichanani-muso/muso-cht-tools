@@ -17,7 +17,7 @@ import {
   faGear, faListCheck, faLock, faPowerOff,
 } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 
 type NavItemProps = {
   icon: IconDefinition;
@@ -114,9 +114,15 @@ export default function HeaderProfileNav() {
               <ProfileDropdownItem icon={faLock}>Lock Account</ProfileDropdownItem>
             </Dropdown.Item>
           </Link>
-          {/* <Link href="#" passHref legacyBehavior 
-            onClick={(e) => { e.preventDefault(); signOut({ callbackUrl: '/api/auth/signout' }) }}>
-          */}
+          {/* <Link
+            href="#"
+            passHref
+            legacyBehavior
+            onClick={async (e) => {
+              e.preventDefault()
+              await signOut({ callbackUrl: '/<login>' })
+            }}
+          > */}
           <Link href="/api/auth/signout" passHref legacyBehavior>
             <Dropdown.Item>
               <ProfileDropdownItem icon={faPowerOff}>Logout</ProfileDropdownItem>
