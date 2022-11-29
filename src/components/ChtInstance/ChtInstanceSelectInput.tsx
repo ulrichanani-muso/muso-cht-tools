@@ -5,18 +5,13 @@ import { useEffect, useState } from 'react'
 import { setCurrentInstance, setInstances } from '../../store/chtInstanceSlice'
 
 const ChtInstanceSelectInput = () => {
-  const [loading, setLoading] = useState(false)
+  const [, setLoading] = useState(false)
 
   const currentChtInstance = useSelector((state) => state.chtInstance.current)
-  const chtInstancesLoaded = useSelector((state) => state.chtInstance.loaded)
   const chtInstances = useSelector((state) => state.chtInstance.instances)
   const dispatch = useDispatch()
 
   const fetchChtInstances = async () => {
-    if (chtInstancesLoaded) {
-      return
-    }
-
     try {
       setLoading(true)
       const response = await fetch('/api/cht-instances', {
@@ -33,7 +28,8 @@ const ChtInstanceSelectInput = () => {
 
   useEffect(() => {
     fetchChtInstances()
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className="d-flex">

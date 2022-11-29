@@ -18,7 +18,6 @@ interface ChtInstanceState {
 const initialState : ChtInstanceState = {
   current: null,
   instances: [],
-  loaded: false,
 }
 
 export const chtInstanceSlice = createSlice({
@@ -30,7 +29,6 @@ export const chtInstanceSlice = createSlice({
     },
     setInstances: (state, action: PayloadAction<ChtInstance[]>) => {
       state.instances = action.payload
-      state.loaded = true
     },
     unsetCurrentInstance: (state) => {
       state.current = null
