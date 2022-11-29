@@ -14,7 +14,7 @@ model ChtInstance {
   id    Int     @id @default(autoincrement())
   name  String
   description  String?
-  env  String
+  environment  String
   url  String
   username  String
   password  String

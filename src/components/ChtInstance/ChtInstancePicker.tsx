@@ -7,6 +7,7 @@ import { faBars, faComputer, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import environmentTypes from 'src/config/environmentTypes'
 import { setCurrentInstance } from '../../store/chtInstanceSlice'
 
 const ChtInstancePicker = () => {
@@ -14,10 +15,7 @@ const ChtInstancePicker = () => {
   const dispatch = useDispatch()
   const router = useRouter()
 
-  const envBadges = {
-    prod: 'danger',
-    dev: 'info',
-  }
+  const envs = environmentTypes.reduce((acc, i) => ({ ...acc, [i.code]: i }), {})
 
   return (
     <div className="py-4">
@@ -61,7 +59,9 @@ const ChtInstancePicker = () => {
                 <ListGroup.Item>
                   <strong>Environement :</strong>
                   {' '}
-                  <Badge bg={envBadges[instance.env] ?? 'info'}>{instance.env}</Badge>
+                  <Badge bg={envs[instance.environment]?.colorVariant ?? 'info'}>
+                    {envs[instance.environment]?.name}
+                  </Badge>
                 </ListGroup.Item>
               </ListGroup>
               <Card.Body>

@@ -23,6 +23,12 @@ export const authOptions = {
     }),
     decode: async ({ secret, token }) => jwt.verify(token, secret, { algorithms: ['HS256'] }),
   },
+  callbacks: {
+    async session({ session, token, user }) {
+      session.user.sub = token.sub
+      return session
+    },
+  },
 }
 
 export default NextAuth(authOptions)

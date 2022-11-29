@@ -1,8 +1,8 @@
-import { getSessionToken } from '../../../helpers/jwt'
 import prisma from '../../../../lib/prisma'
+import { getSession } from 'next-auth/react'
 
 const handler = async (req, res) => {
-  const session = await getSessionToken({ req })
+  const session = await getSession({ req })
 
   if (!session) {
     return res.status(401).json({ error: 'Unauthenticated' })
@@ -10,7 +10,7 @@ const handler = async (req, res) => {
 
   const result = await prisma.chtInstance.findMany({
     where: {
-      authorId: session.sub,
+      authorId: session.user.sub,
     },
   })
 

@@ -2,13 +2,13 @@
     {
         "code": "muso_mali_local",
         "name": "Muso Mali - Local",
-        "url": "https://localhost:4050",
+        "url": "https://127.0.0.1:4050",
         "environment": "local"
     },
     {
         "code": "muso_mali_prod",
         "name": "Muso Mali - Prod",
-        "url": "https://localhost:4050",
+        "url": "https://muso-mali.app.medicmobile.org",
         "environment": "prod"
     }
 ]
