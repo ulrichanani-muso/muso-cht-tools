@@ -12,6 +12,10 @@ const ChtInstanceSelectInput = () => {
   const dispatch = useDispatch()
 
   const fetchChtInstances = async () => {
+    if (chtInstances.length) {
+      return
+    }
+
     try {
       setLoading(true)
       const response = await fetch('/api/cht-instances', {
