@@ -39,7 +39,7 @@ export const chtInstanceSlice = createSlice({
 // export const currentInstance = (state: RootState) => state.chtInstance.current
 
 export const {
-  setCurrentInstance, unsetCurrentInstance, setInstances
+  setCurrentInstance, unsetCurrentInstance, setInstances,
 } = chtInstanceSlice.actions
 
 export default chtInstanceSlice.reducer

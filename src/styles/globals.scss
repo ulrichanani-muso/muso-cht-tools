@@ -1,6 +1,13 @@
 $enable-negative-margins: true;
 
-@import "~bootstrap/scss/bootstrap";
+// @import "~bootstrap/scss/bootstrap";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+
+@import '~mdb-ui-kit/css/mdb.min.css';
 
 @import "layout/avatar";
 @import "layout/footer";

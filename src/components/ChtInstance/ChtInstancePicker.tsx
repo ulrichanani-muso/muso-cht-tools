@@ -5,12 +5,14 @@ import {
 import { ChtInstance } from '@prisma/client'
 import { faBars, faComputer, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { setCurrentInstance } from '../../store/chtInstanceSlice'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { setCurrentInstance } from '../../store/chtInstanceSlice'
 
 const ChtInstancePicker = () => {
   const chtInstances = useSelector((state) => state.chtInstance.instances)
   const dispatch = useDispatch()
+  const router = useRouter()
 
   const envBadges = {
     prod: 'danger',
@@ -25,7 +27,7 @@ const ChtInstancePicker = () => {
 
       <div className="my-3">
         <Link href="/cht-instances/create" passHref>
-          <Button variant="secondary">
+          <Button variant="primary">
             <FontAwesomeIcon icon={faPlus} />
             {' '}
             Ajouter une nouvelle instance
@@ -63,7 +65,15 @@ const ChtInstancePicker = () => {
                 </ListGroup.Item>
               </ListGroup>
               <Card.Body>
-                <Button variant="secondary">Sélectionner</Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    dispatch(setCurrentInstance(instance.id))
+                    router.push('/menu')
+                  }}
+                >
+                  Sélectionner
+                </Button>
               </Card.Body>
             </Card>
           </Col>

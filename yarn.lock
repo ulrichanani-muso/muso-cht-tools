@@ -2065,6 +2065,11 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
+mdb-ui-kit@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/mdb-ui-kit/-/mdb-ui-kit-6.0.1.tgz#5ee81d4a4e626446379a158483129b4860408a17"
+  integrity sha512-jZlO47ytSLcAzBmjSThtI+0QGDjJd4+EGZrHL6ZNI5tVd7OVyXvzEyoi5f9XU/rLMBUT2fwrkFQVubBg/Aw3Bw==
+
 media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
