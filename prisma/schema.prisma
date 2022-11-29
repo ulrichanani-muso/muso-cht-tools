@@ -13,10 +13,13 @@ datasource db {
 model ChtInstance {
   id    Int     @id @default(autoincrement())
   name  String
+  description  String?
   env  String
   url  String
-  authorId  String?
-  author    User?   @relation(fields: [authorId], references: [id])
+  username  String
+  password  String
+  authorId  String
+  author    User   @relation(fields: [authorId], references: [id])
 }
 
 model Account {

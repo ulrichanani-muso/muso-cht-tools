@@ -1,18 +1,38 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Form } from 'react-bootstrap'
 import { ChtInstance } from '@prisma/client'
-import { setCurrentInstance } from '../../store/chtInstanceSlice'
+import { useEffect, useState } from 'react'
+import { setCurrentInstance, setInstances } from '../../store/chtInstanceSlice'
 
-const ChtInstanceSelector = () => {
+const ChtInstanceSelectInput = () => {
+  const [loading, setLoading] = useState(false)
+
   const currentChtInstance = useSelector((state) => state.chtInstance.current)
   const chtInstances = useSelector((state) => state.chtInstance.instances)
   const dispatch = useDispatch()
 
+  const fetchChtInstances = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/cht-instances', {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      dispatch(setInstances(await response.json()))
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchChtInstances()
+  })
+
   return (
     <div className="d-flex">
-      <span>
-        Instance :
-      </span>
+      <p className="my-auto">Instance&nbsp;:&nbsp;</p>
 
       <Form.Select
         value={currentChtInstance?.id}
@@ -31,4 +51,4 @@ const ChtInstanceSelector = () => {
   )
 }
 
-export default ChtInstanceSelector
+export default ChtInstanceSelectInput

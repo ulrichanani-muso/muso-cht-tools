@@ -2,17 +2,11 @@ import type { NextPage } from 'next'
 import { AdminLayout } from '@layout'
 import React from 'react'
 import { useSession } from 'next-auth/react'
-import { setInstances } from 'src/store/chtInstanceSlice'
-import { useDispatch } from 'react-redux'
-import AddNewChtInstance from '../components/ChtInstance/AddNewChtInstance'
 
-import prisma from '../../lib/prisma'
+import ChtInstancePicker from 'src/components/ChtInstance/ChtInstancePicker'
 
-const Home: NextPage = ({ instances }) => {
+const Home: NextPage = () => {
   const { data: session } = useSession()
-  const dispatch = useDispatch()
-
-  dispatch(setInstances(instances))
 
   return (
     <AdminLayout>
@@ -23,18 +17,10 @@ const Home: NextPage = ({ instances }) => {
         ,
       </h3>
 
-      <AddNewChtInstance />
+      <ChtInstancePicker />
 
     </AdminLayout>
   )
 }
 
 export default Home
-
-export const getStaticProps = async () => {
-  const instances = await prisma.chtInstance.findMany()
-
-  return {
-    props: { instances },
-  }
-}

@@ -22,9 +22,9 @@ const AddNewChtInstance = () => {
 
   return (
     <div>
-      <div>
-        Rajoutez une instance CHT:
-      </div>
+      <h4 className="mb-4">
+        Ajouter une instance :
+      </h4>
 
       <Card className="my-4">
         <Card.Header>
