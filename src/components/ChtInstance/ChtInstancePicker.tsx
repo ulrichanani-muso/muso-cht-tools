@@ -35,7 +35,7 @@ const ChtInstancePicker = () => {
         </Link>
       </div>
 
-      <Row xs={1} md={3} className="g-2">
+      <Row xs={1} sm={2} md={2} lg={3} className="g-2">
         {chtInstances.map((instance: ChtInstance) => (
           <Col key={instance.id}>
             <Card>
