@@ -8,11 +8,12 @@ const ChtInstanceSelectInput = () => {
   const [loading, setLoading] = useState(false)
 
   const currentChtInstance = useSelector((state) => state.chtInstance.current)
+  const chtInstancesLoaded = useSelector((state) => state.chtInstance.loaded)
   const chtInstances = useSelector((state) => state.chtInstance.instances)
   const dispatch = useDispatch()
 
   const fetchChtInstances = async () => {
-    if (chtInstances.length) {
+    if (chtInstancesLoaded) {
       return
     }
 
