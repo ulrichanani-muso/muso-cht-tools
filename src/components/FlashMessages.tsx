@@ -10,19 +10,25 @@ export default function FlashMessages({ children }) {
   const router = useRouter()
 
   useEffect(() => {
-    console.log('Flash hooking...')
-
-    const handleRouteChange = (url, { shallow }) => {
-      messages.map((m) => toast[m.type ?? 'info'](m.text))
-      dispatch(clearMessages())
+    if (!messages.length) {
+      return
     }
 
-    router.events.on('routeChangeComplete', handleRouteChange)
+    const handler = ((toasts, version) => {
+      const handleRouteChange = () => {
+        toasts.map((m) => toast[m.type ?? 'info'](m.text))
+        dispatch(clearMessages())
+      }
+
+      return handleRouteChange
+    })(messages, +new Date())
+
+    router.events.on('routeChangeComplete', handler)
 
     // If the component is unmounted, unsubscribe
     // from the event with the `off` method:
     return () => {
-      router.events.off('routeChangeComplete', handleRouteChange)
+      router.events.off('routeChangeComplete', handler)
     }
   }, [messages])
 
