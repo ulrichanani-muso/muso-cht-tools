@@ -1,5 +1,5 @@
 import {
-  Button, Card, Form, Spinner, Toast,
+  Button, Card, Form, Spinner,
 } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
@@ -7,12 +7,16 @@ import * as Yup from 'yup'
 import environmentTypes from 'src/config/environmentTypes'
 import { useRouter } from 'next/router'
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import { flash } from 'src/store/flashMessagesSlice'
+import { toast } from 'react-toastify'
 import { chtInstancesTemplates } from '../../config/config'
 
 const AddNewChtInstance = () => {
   const [template, setTemplate] = useState('')
   const [submiting, setSubmiting] = useState(false)
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const validationSchema = Yup.object({
     name: Yup.string().required('Requis'),
@@ -42,8 +46,10 @@ const AddNewChtInstance = () => {
         '/api/cht-instances/create',
         data,
       )
+      dispatch(flash({ text: 'Nouvelle instance rajoutée !' }))
       await router.push('/')
     } catch (error) {
+      toast.error(`Une erreur s'est produite : \n${error.message}`)
       console.error(error)
     } finally {
       setSubmiting(false)

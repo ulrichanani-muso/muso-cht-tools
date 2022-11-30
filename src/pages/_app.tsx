@@ -8,6 +8,7 @@ import { SSRProvider } from 'react-bootstrap'
 import { SessionProvider } from 'next-auth/react'
 import { Provider } from 'react-redux'
 import Auth from 'src/components/Auth'
+import FlashMessages from 'src/components/FlashMessages'
 import { store } from '../store'
 
 // You change this configuration value to false so that the Font Awesome core SVG library
@@ -25,13 +26,15 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     <SSRProvider>
       <Provider store={store}>
         <SessionProvider session={session}>
-          {Component.auth ? (
-            <Auth>
+          <FlashMessages>
+            {Component.auth ? (
+              <Auth>
+                <Component {...pageProps} />
+              </Auth>
+            ) : (
               <Component {...pageProps} />
-            </Auth>
-          ) : (
-            <Component {...pageProps} />
-          )}
+            )}
+          </FlashMessages>
         </SessionProvider>
       </Provider>
     </SSRProvider>

@@ -1,19 +1,20 @@
 import { useSelector, useDispatch } from 'react-redux'
 import {
-  Form, Row, Col, Card, ListGroup, Button, Badge,
+  Row, Col, Card, ListGroup, Button, Badge,
 } from 'react-bootstrap'
 import { ChtInstance } from '@prisma/client'
-import { faBars, faComputer, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faComputer, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import environmentTypes from 'src/config/environmentTypes'
+import { flash } from 'src/store/flashMessagesSlice'
 import { setCurrentInstance } from '../../store/chtInstanceSlice'
 
 const ChtInstancePicker = () => {
   const chtInstances = useSelector((state) => state.chtInstance.instances)
-  const dispatch = useDispatch()
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const envs = environmentTypes.reduce((acc, i) => ({ ...acc, [i.code]: i }), {})
 
@@ -69,6 +70,7 @@ const ChtInstancePicker = () => {
                   variant="secondary"
                   onClick={() => {
                     dispatch(setCurrentInstance(instance.id))
+                    dispatch(flash({ text: `Instance ${instance.name} selectionnée` }))
                     router.push('/menu')
                   }}
                 >

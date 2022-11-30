@@ -8,6 +8,7 @@ import Header from '@layout/AdminLayout/Header/Header'
 import Footer from '@layout/AdminLayout/Footer/Footer'
 import { Container } from 'react-bootstrap'
 import Auth from 'src/components/Auth'
+import { ToastContainer } from 'react-toastify'
 
 export default function AdminLayout({ children }: PropsWithChildren) {
   // Show status for xs screen
@@ -59,6 +60,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <Header toggleSidebar={toggleIsShowSidebar} toggleSidebarMd={toggleIsShowSidebarMd} />
         <div className="body flex-grow-1 px-3">
+          <ToastContainer />
           <Container fluid="lg">
             {children}
           </Container>
