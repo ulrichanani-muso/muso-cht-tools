@@ -9,6 +9,8 @@ import Footer from '@layout/AdminLayout/Footer/Footer'
 import { Container } from 'react-bootstrap'
 import Auth from 'src/components/Auth'
 import { ToastContainer } from 'react-toastify'
+// import { getCookieToken } from '../../helpers/auth'
+// import axios from 'axios'
 
 export default function AdminLayout({ children }: PropsWithChildren) {
   // Show status for xs screen
@@ -44,6 +46,11 @@ export default function AdminLayout({ children }: PropsWithChildren) {
       setIsShowSidebarMd(localStorage.getItem('isShowSidebarMd') === 'true')
     }
   }, [setIsShowSidebarMd])
+
+  // Setup axios auth header
+  // useEffect(() => {
+  //   axios.defaults.headers.common['Authorization'] = `Bearer ${getCookieToken()}`
+  // }, [])
 
   return (
     <Auth>

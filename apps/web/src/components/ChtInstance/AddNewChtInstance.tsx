@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux'
 import { flash } from 'src/store/flashMessagesSlice'
 import { toast } from 'react-toastify'
 import { chtInstancesTemplates } from '../../config/config'
+import { getCookieToken } from '../../helpers/auth'
 
 const { Control: { Feedback } } = Form
 
@@ -34,7 +35,8 @@ const AddNewChtInstance = () => {
     setSubmiting(true)
     try {
       await axios.post(
-        '/api/cht-instances/create',
+        process.env.NEXT_PUBLIC_API_URL + 
+        '/api/cht-instances',
         data,
       )
       dispatch(flash({ text: 'Nouvelle instance rajoutée !' }))

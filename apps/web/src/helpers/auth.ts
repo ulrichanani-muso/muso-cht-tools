@@ -1,6 +1,7 @@
 import { getToken as getTokenBase } from 'next-auth/jwt'
 import * as jwt from 'jsonwebtoken'
 import { getSession } from 'next-auth/react'
+import { getCookie } from './cookie'
 
 const getToken: Promise<jwt.JwtPayload | null> = async ({ req }) => {
   const token = await getTokenBase({ req, raw: true })
@@ -20,4 +21,8 @@ const getUserId = async ({ req }) => {
   return session?.user?.sub
 }
 
-export { getToken, getUserId }
+const getCookieToken = () => {
+  return getCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME)
+}
+
+export { getToken, getUserId, getCookieToken }

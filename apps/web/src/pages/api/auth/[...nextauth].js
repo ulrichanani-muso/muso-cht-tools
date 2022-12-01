@@ -9,7 +9,6 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  // adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
   },
@@ -25,6 +24,17 @@ export const authOptions = {
     async session({ session, token, user }) {
       session.user.sub = token.sub
       return session
+    },
+  },
+  cookies: {
+    sessionToken: {
+      name: process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME,
+      options: {
+        httpOnly: false,
+        sameSite: 'lax',
+        path: '/',
+        secure: false,
+      },
     },
   },
 }
