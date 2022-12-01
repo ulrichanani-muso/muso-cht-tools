@@ -7,18 +7,18 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import environmentTypes from 'src/config/environmentTypes'
 import { useRouter } from 'next/router'
-import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { flash } from 'src/store/flashMessagesSlice'
 import { toast } from 'react-toastify'
 import { chtInstancesTemplates } from '../../config/config'
-import { getCookieToken } from '../../helpers/auth'
+import api from '../../helpers/api'
 
 const { Control: { Feedback } } = Form
 
 const AddNewChtInstance = () => {
   const [template, setTemplate] = useState('')
   const [submiting, setSubmiting] = useState(false)
+
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -34,11 +34,7 @@ const AddNewChtInstance = () => {
   const submitData = async (data) => {
     setSubmiting(true)
     try {
-      await axios.post(
-        process.env.NEXT_PUBLIC_API_URL + 
-        '/api/cht-instances',
-        data,
-      )
+      await api.post('/cht-instances', data)
       dispatch(flash({ text: 'Nouvelle instance rajoutée !' }))
       await router.push('/')
     } catch (error) {

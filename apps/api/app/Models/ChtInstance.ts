@@ -2,6 +2,13 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, hasOne, HasOne } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 
+export enum EnvironmentType {
+  'production',
+  'development',
+  'local',
+  'test'
+}
+
 export default class ChtInstance extends BaseModel {
   @column({ isPrimary: true })
   public id: number
@@ -13,7 +20,7 @@ export default class ChtInstance extends BaseModel {
   public description?: string
 
   @column()
-  public environment: string
+  public environment: EnvironmentType
 
   @column()
   public url: string

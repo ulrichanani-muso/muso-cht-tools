@@ -12,7 +12,7 @@ interface EnvironmentType {
 
 const environmentTypes: EnvironmentType[] = [
   {
-    code: 'prod',
+    code: 'production',
     name: 'Production',
     colorVariant: 'danger',
   },
@@ -22,8 +22,8 @@ const environmentTypes: EnvironmentType[] = [
     colorVariant: 'warning',
   },
   {
-    code: 'dev',
-    name: 'Dev',
+    code: 'development',
+    name: 'Developement',
     colorVariant: 'secondary',
   },
   {
