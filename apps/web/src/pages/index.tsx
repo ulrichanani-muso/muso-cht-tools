@@ -5,14 +5,13 @@ import { useSession } from 'next-auth/react'
 import axios from 'axios'
 import ChtInstancePicker from 'src/components/ChtInstance/ChtInstancePicker'
 import { getCookieToken } from '../helpers/auth'
+    import api from '../helpers/api'
 
 const Home: NextPage = () => {
   const { data: session } = useSession()
 
   useEffect(() => {
-    axios.get(process.env.NEXT_PUBLIC_API_URL + '/api/me/profile', {
-      headers: { Authorization: `Bearer ${getCookieToken()}` }
-    })
+    api.get('/me/profile')
   }, [])
 
   return (

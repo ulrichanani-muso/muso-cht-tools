@@ -1,4 +1,10 @@
+import { isSsr } from './common'
+
 function getCookie(cname) {
+  if(isSsr()) {
+    return
+  }
+
   let name = cname + "=";
   let decodedCookie = window.decodeURIComponent(document.cookie);
   let ca = decodedCookie.split(";");

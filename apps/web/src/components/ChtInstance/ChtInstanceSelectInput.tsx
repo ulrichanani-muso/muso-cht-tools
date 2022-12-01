@@ -3,6 +3,7 @@ import { Form } from 'react-bootstrap'
 import { ChtInstance } from '@prisma/client'
 import { useEffect, useState } from 'react'
 import { setCurrentInstance, setInstances } from '../../store/chtInstanceSlice'
+import api from '../../helpers/api'
 
 const ChtInstanceSelectInput = () => {
   const [, setLoading] = useState(false)
@@ -14,11 +15,8 @@ const ChtInstanceSelectInput = () => {
   const fetchChtInstances = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/cht-instances', {
-        headers: { 'Content-Type': 'application/json' },
-      })
-      dispatch(setInstances(await response.json()))
-      setLoading(false)
+      const res = await api.get('/cht-instances')
+      dispatch(setInstances(res.data.data))
     } catch (error) {
       console.error(error)
     } finally {

@@ -21,7 +21,8 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
-  Route.get('profile', 'AuthController.profile')
+  Route.get('me/profile', 'AuthController.profile')
+  Route.resource('cht-instances', 'ChtInstancesController').apiOnly()
 })
-  .prefix('/api/me')
+  .prefix('/api')
   .middleware(['auth'])
