@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import {
   Button, Card, Form, Spinner,
 } from 'react-bootstrap'
@@ -11,6 +12,8 @@ import { useDispatch } from 'react-redux'
 import { flash } from 'src/store/flashMessagesSlice'
 import { toast } from 'react-toastify'
 import { chtInstancesTemplates } from '../../config/config'
+
+const { Control: { Feedback } } = Form
 
 const AddNewChtInstance = () => {
   const [template, setTemplate] = useState('')
@@ -27,18 +30,6 @@ const AddNewChtInstance = () => {
     environment: Yup.string().required('Requis'),
   })
 
-  useEffect(() => {
-    if (!template || template === 'custom') {
-      return
-    }
-
-    const selectedTemplate = chtInstancesTemplates.find((i) => i.code === template)
-
-    if (selectedTemplate) {
-      formik.setFieldValue('url', selectedTemplate.url)
-    }
-  }, [template])
-
   const submitData = async (data) => {
     setSubmiting(true)
     try {
@@ -49,7 +40,7 @@ const AddNewChtInstance = () => {
       dispatch(flash({ text: 'Nouvelle instance rajoutée !' }))
       await router.push('/')
     } catch (error) {
-      toast.error(`Une erreur s'est produite : \n${error.message}`)
+      toast.error(`Une erreur s'est produite : \n${error?.message}`)
       console.error(error)
     } finally {
       setSubmiting(false)
@@ -71,6 +62,19 @@ const AddNewChtInstance = () => {
     },
   })
 
+  useEffect(() => {
+    if (!template || template === 'custom') {
+      return
+    }
+
+    const selectedTemplate = chtInstancesTemplates.find((i) => i.code === template)
+
+    if (selectedTemplate) {
+      formik.setFieldValue('url', selectedTemplate.url)
+      formik.setFieldValue('environment', selectedTemplate.environment)
+    }
+  }, [template])
+
   return (
     <div>
       <h4 className="mb-4">
@@ -88,14 +92,12 @@ const AddNewChtInstance = () => {
                 <Form.Label>Template :</Form.Label>
                 <Form.Select
                   value={template}
-                  onChange={(event) => {
-                    setTemplate(event.currentTarget.value)
-                  }}
+                  onChange={(event) => setTemplate(event.currentTarget.value)}
                 >
                   <option value="">Choisissez un template</option>
-                  {chtInstancesTemplates.map((template) => (
-                    <option value={template.code} key={template.code}>
-                      {template.name}
+                  {chtInstancesTemplates.map((i) => (
+                    <option value={i.code} key={i.code}>
+                      {i.name}
                     </option>
                   ))}
                   <option value="custom">Autre</option>
@@ -107,14 +109,10 @@ const AddNewChtInstance = () => {
                 <Form.Control
                   type="text"
                   placeholder="Name"
-                  isInvalid={!!formik.errors.name}
+                  isInvalid={!!formik.errors?.name}
                   {...formik.getFieldProps('name')}
                 />
-                {formik.touched.name && formik.errors.name ? (
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.name}
-                  </Form.Control.Feedback>
-                ) : null}
+                <Feedback type="invalid">{formik.errors?.name}</Feedback>
               </Form.Group>
 
               <Form.Group className="mb-4" controlId="description">
@@ -122,31 +120,23 @@ const AddNewChtInstance = () => {
                 <Form.Control
                   type="text"
                   placeholder="Description"
-                  isInvalid={!!formik.errors.description}
+                  isInvalid={!!formik.errors?.description}
                   {...formik.getFieldProps('description')}
                 />
-                {formik.touched.description && formik.errors.description ? (
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.description}
-                  </Form.Control.Feedback>
-                ) : null}
+                <Feedback type="invalid">{formik.errors?.description}</Feedback>
               </Form.Group>
 
               <Form.Group className="mb-4" controlId="instanceUrl">
-                <Form.Label>URL de l'instance :</Form.Label>
+                <Form.Label>URL de l&apos;instance :</Form.Label>
                 <Form.Control
                   className="mb-0"
                   type="text"
                   placeholder="https://muso-mali.medi..."
                   // readOnly={!template || template !== 'custom'}
-                  isInvalid={!!formik.errors.url}
+                  isInvalid={!!formik.errors?.url}
                   {...formik.getFieldProps('url')}
                 />
-                {formik.touched.url && formik.errors.url ? (
-                  <Form.Control.Feedback type="invalid" className="mt-0">
-                    {formik.errors.url}
-                  </Form.Control.Feedback>
-                ) : null}
+                <Feedback type="invalid">{formik.errors?.url}</Feedback>
               </Form.Group>
 
               <Form.Group className="mb-4" controlId="username">
@@ -154,14 +144,10 @@ const AddNewChtInstance = () => {
                 <Form.Control
                   type="text"
                   placeholder="Username"
-                  isInvalid={!!formik.errors.username}
+                  isInvalid={!!formik.errors?.username}
                   {...formik.getFieldProps('username')}
                 />
-                {formik.touched.username && formik.errors.username ? (
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.username}
-                  </Form.Control.Feedback>
-                ) : null}
+                <Feedback type="invalid">{formik.errors?.username}</Feedback>
               </Form.Group>
 
               <Form.Group className="mb-4" controlId="password">
@@ -172,20 +158,15 @@ const AddNewChtInstance = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.password}
-                  isInvalid={!!formik.errors.password}
+                  isInvalid={!!formik.errors?.password}
                 />
-                {formik.touched.password && formik.errors.password ? (
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.password}
-                  </Form.Control.Feedback>
-                ) : null}
+                <Feedback type="invalid">{formik.errors?.password}</Feedback>
               </Form.Group>
 
               <Form.Group className="mb-4" controlId="environment">
                 <Form.Label>Environement :</Form.Label>
                 <Form.Select
-                  type="environment"
-                  isInvalid={!!formik.errors.environment}
+                  isInvalid={!!formik.errors?.environment}
                   {...formik.getFieldProps('environment')}
                 >
                   <option value="">Choisissez un Environement</option>
@@ -195,11 +176,7 @@ const AddNewChtInstance = () => {
                     </option>
                   ))}
                 </Form.Select>
-                {formik.touched.environment && formik.errors.environment ? (
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.environment}
-                  </Form.Control.Feedback>
-                ) : null}
+                <Feedback type="invalid">{formik.errors?.environment}</Feedback>
               </Form.Group>
 
               <Button variant="primary" type="submit" className="mt-3">
