@@ -12,7 +12,7 @@ export default class ChtInstancesController {
   public async store({ request, user }: HttpContextContract) {
     const data = await request.validate(StoreChtInstanceValidator)
 
-    const instance = user.related('chtInstances').create(data)
+    const instance = await user.related('chtInstances').create(data)
 
     return { data: instance }
   }
