@@ -20,4 +20,18 @@ export default class ExceptionHandler extends HttpExceptionHandler {
   constructor() {
     super(Logger)
   }
+
+  public async handle(error: any, ctx: HttpContextContract) {
+    /**
+     * Self handle the validation exception
+     */
+    if (error.code === 'E_ROW_NOT_FOUND') {
+      return ctx.response.status(404).send({
+        message: 'Resource not found',
+        code: error.code,
+      })
+    }
+
+    return super.handle(error, ctx)
+  }
 }
