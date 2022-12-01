@@ -16,4 +16,16 @@ export default class ChtInstancesController {
 
     return { data: instance }
   }
+
+  public async show({ request, user }: HttpContextContract) {
+    const instance = await user.related('chtInstances').query().where('id', request.params().id).firstOrFail()
+
+    return { data: instance }
+  }
+
+  public async destroy({ request, user }: HttpContextContract) {
+    const instance = await user.related('chtInstances').query().where('id', request.params().id).firstOrFail()
+
+    return { data: instance }
+  }
 }

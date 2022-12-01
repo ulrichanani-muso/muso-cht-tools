@@ -3,13 +3,15 @@ import {
   Row, Col, Card, ListGroup, Button, Badge,
 } from 'react-bootstrap'
 import { ChtInstance } from '@prisma/client'
-import { faComputer, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faComputer, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import environmentTypes from 'src/config/environmentTypes'
 import { flash } from 'src/store/flashMessagesSlice'
 import { setCurrentInstance } from '../../store/chtInstanceSlice'
+import api from '../../helpers/api'
+import { toast } from 'react-toastify'
 
 const ChtInstancePicker = () => {
   const chtInstances = useSelector((state) => state.chtInstance.instances)
@@ -17,6 +19,21 @@ const ChtInstancePicker = () => {
   const dispatch = useDispatch()
 
   const envs = environmentTypes.reduce((acc, i) => ({ ...acc, [i.code]: i }), {})
+
+  const deleteInstance = async (instance) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette isntance ?')) {
+      return
+    }
+
+    try {
+      await api.delete('/cht-instances/' + instance.id)
+      toast('Instance supprimée')
+      router.reload()
+    } catch (error) {
+      toast.error(`Une erreur s'est produite : \n${error?.message}`)
+      console.error(error)
+    }
+  }
 
   return (
     <div className="py-4">
@@ -76,6 +93,11 @@ const ChtInstancePicker = () => {
                 >
                   Sélectionner
                 </Button>
+                <Button variant="danger" className="ms-1"
+                onClick={() => deleteInstance(instance)}
+                >
+                    <FontAwesomeIcon icon={faTrash} />
+              </Button>
               </Card.Body>
             </Card>
           </Col>
