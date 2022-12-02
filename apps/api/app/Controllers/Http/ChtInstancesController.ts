@@ -25,6 +25,7 @@ export default class ChtInstancesController {
 
   public async destroy({ request, user }: HttpContextContract) {
     const instance = await user.related('chtInstances').query().where('id', request.params().id).firstOrFail()
+    await instance.delete()
 
     return { data: instance }
   }

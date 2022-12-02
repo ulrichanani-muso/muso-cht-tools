@@ -9,10 +9,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import environmentTypes from 'src/config/environmentTypes'
 import { flash } from 'src/store/flashMessagesSlice'
-import { setCurrentInstance } from '../../store/chtInstanceSlice'
-import api from '../../helpers/api'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
+import { setCurrentInstance } from '../../store/chtInstanceSlice'
+import api from '../../helpers/api'
 
 const ChtInstancesList = () => {
   const chtInstances = useSelector((state) => state.chtInstance.instances)
@@ -29,9 +29,9 @@ const ChtInstancesList = () => {
     }
 
     try {
-      await api.delete('/cht-instances/' + instance.id)
+      await api.delete(`/cht-instances/${instance.id}`)
       toast('Instance supprimée')
-      router.reload()
+      router.reload() // TODO: Reload component only
     } catch (error) {
       console.error(error)
       toast.error(`Une erreur s'est produite : \n${error?.message}`)
@@ -40,11 +40,9 @@ const ChtInstancesList = () => {
 
   useEffect(() => {
     setFilteredInstances(
-      chtInstances.filter(i => {
-          return !search ||
-            i.name.toLowerCase()
-              .search(search.toLowerCase()) >= 0
-        })
+      chtInstances.filter((i) => !search
+            || i.name.toLowerCase()
+              .search(search.toLowerCase()) >= 0),
     )
   }, [search])
 
@@ -60,11 +58,11 @@ const ChtInstancesList = () => {
 
       <div className="my-3 text-end">
         <Form.Control
-            className='d-inline w-auto me-2'
-            type="text"
-            placeholder="Rechercher..."
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          className="d-inline w-auto me-2"
+          type="text"
+          placeholder="Rechercher..."
+          onChange={(e) => setSearch(e.target.value)}
+        />
         <Link href="/cht-instances/create" passHref>
           <Button variant="primary">
             <FontAwesomeIcon icon={faPlus} />
@@ -77,7 +75,7 @@ const ChtInstancesList = () => {
       <Row xs={1} sm={2} md={2} lg={3} className="g-2">
         {filteredInstances.map((instance: ChtInstance) => (
           <Col key={instance.id}>
-            <Card>
+            <Card className="h-100">
               <Card.Body>
                 <Card.Title>
                   <FontAwesomeIcon icon={faComputer} />
@@ -85,27 +83,27 @@ const ChtInstancesList = () => {
                   {instance.name}
                 </Card.Title>
                 <Card.Text>{instance.description}</Card.Text>
+                <ListGroup className="list-group-flush">
+                  <ListGroup.Item>
+                    <strong>URL :</strong>
+                    {' '}
+                    {instance.url}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Username :</strong>
+                    {' '}
+                    {instance.username}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Environement :</strong>
+                    {' '}
+                    <Badge bg={envs[instance.environment]?.colorVariant ?? 'info'}>
+                      {envs[instance.environment]?.name}
+                    </Badge>
+                  </ListGroup.Item>
+                </ListGroup>
               </Card.Body>
-              <ListGroup className="list-group-flush">
-                <ListGroup.Item>
-                  <strong>URL :</strong>
-                  {' '}
-                  {instance.url}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <strong>Username :</strong>
-                  {' '}
-                  {instance.username}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <strong>Environement :</strong>
-                  {' '}
-                  <Badge bg={envs[instance.environment]?.colorVariant ?? 'info'}>
-                    {envs[instance.environment]?.name}
-                  </Badge>
-                </ListGroup.Item>
-              </ListGroup>
-              <Card.Body>
+              <Card.Footer>
                 <Button
                   variant="secondary"
                   onClick={() => {
@@ -116,12 +114,14 @@ const ChtInstancesList = () => {
                 >
                   Sélectionner
                 </Button>
-                <Button variant="danger" className="ms-1 px-3"
-                onClick={() => deleteInstance(instance)}
+                <Button
+                  variant="danger"
+                  className="ms-1 px-3"
+                  onClick={() => deleteInstance(instance)}
                 >
-                    <FontAwesomeIcon icon={faTrash} />
-              </Button>
-              </Card.Body>
+                  <FontAwesomeIcon icon={faTrash} />
+                </Button>
+              </Card.Footer>
             </Card>
           </Col>
         ))}
