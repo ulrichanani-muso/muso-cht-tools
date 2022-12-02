@@ -1,12 +1,67 @@
 import type { NextPage } from 'next'
 import { AdminLayout } from '@layout'
-import React from 'react'
-import { Button, Card } from 'react-bootstrap'
+import React, { useRef, useState } from 'react'
+import { Form, Button, Card, Spinner } from 'react-bootstrap'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import * as Yup from 'yup'
+import { useFormik } from 'formik'
+import { flash } from 'src/store/flashMessagesSlice'
+import { useRouter } from 'next/router'
+import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
+import api from 'src/helpers/api'
 
-const Home: NextPage = () => {
+const { Control: { Feedback } } = Form
+
+const ContactRenaming: NextPage = () => {
+  const [submiting, setSubmiting] = useState(false)
+  const currentChtInstance = useSelector((state) => state.chtInstance.current)
+  const fileRef = useRef()
+
+  const router = useRouter()
+  const dispatch = useDispatch()
+
+  const validationSchema = Yup.object({
+    fileop: Yup.mixed().required('File is required'),
+      // .test("fileSize", "Fichier trop volumineux", (value) => {
+      //   console.log(value)
+      //   if (!value?.length) return false // attachment is optional
+      //   return true
+      //   // return value[0].size <= 2000000
+      // }),
+  })
+
+  const submitData = async (data) => {
+    setSubmiting(true)
+    try {
+      const body = new FormData();
+      body.append("fileop", fileRef.current.files[0]);
+      body.append("instanceId", currentChtInstance.id);
+
+      await api.post('/cht-instances', body, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      dispatch(flash({ text: 'L\'opération a démarré !' }))
+      await router.push('/')
+    } catch (error) {
+      console.error(error)
+      toast.error(`Une erreur s'est produite : \n${error?.message}`)
+    } finally {
+      setSubmiting(false)
+    }
+  }
+
+  const formik = useFormik({
+    initialValues: {},
+    validationSchema,
+    onSubmit: (values) => {
+      submitData(values)
+    },
+  })
 
   return (
     <AdminLayout>
@@ -25,13 +80,28 @@ const Home: NextPage = () => {
       <Card className="mb-4">
         <Card.Body className="py-3 d-flex justify-content-between align-items-start">
             <div>
-                From my own experience, I can say that the return of functions from functions 
-                causes the greatest difficulties for beginners. 
-                And the point is not that the return is complicated in itself, 
-                but that at first it is very difficult to understand why 
-                this may be necessary. In real life, this technique is often used, 
-                both in JS and in many other languages. Functions that accept functions 
-                that return functions are common for any js code.
+            <Form onSubmit={formik.handleSubmit}>
+
+              <Form.Group className="mb-4" controlId="fileop">
+                <Form.Label>Ficher Excell :</Form.Label>
+                <Form.Control
+                  ref={fileRef}
+                  type="file"
+                  accept=".xls,.xlsx"
+                  required
+                  placeholder="Ficher Excell"
+                  isInvalid={!!formik.errors?.fileop}
+                  {...formik.getFieldProps('fileop')}
+                />
+                <Feedback type="invalid">{formik.errors?.fileop}</Feedback>
+              </Form.Group>
+
+              <Button variant="primary" type="submit" className="mt-3">
+                {submiting && <Spinner size="sm" animation="border" role="status" />}
+                {' '}
+                Démarrer
+              </Button>
+            </Form>
             </div>
         </Card.Body>
     </Card>
@@ -40,4 +110,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default ContactRenaming
