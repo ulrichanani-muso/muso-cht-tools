@@ -1,28 +1,36 @@
 import type { NextPage } from 'next'
 import { AdminLayout } from '@layout'
 import React from 'react'
-import { flash } from 'src/store/flashMessagesSlice'
-import { Button } from 'react-bootstrap'
-import { useRouter } from 'next/router'
-import { useDispatch } from 'react-redux'
+import { Card } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPencil } from '@fortawesome/free-solid-svg-icons'
+import Link from 'next/link'
 
 const Home: NextPage = () => {
-  const router = useRouter()
-  const dispatch = useDispatch()
 
   return (
     <AdminLayout>
       <h3 className="mb-4">Menu</h3>
 
-      <Button
-        variant="secondary"
-        onClick={() => {
-          dispatch(flash({ text: 'Retour à la liste des instances' }))
-          router.push('/')
-        }}
-      >
-        Retour
-      </Button>
+      <div className="row">
+        <div className="col-sm-6 col-lg-4">
+          <Link href="/contacts/renaming">
+            <Card bg="primary" text="white" className="mb-4">
+              <Card.Body className="pb-0 d-flex justify-content-between align-items-start">
+                <div>
+                  <div className="fs-4 fw-semibold d-flex">
+                    <span className="fs-4 me-2 fw-normal mt-1">
+                      <FontAwesomeIcon icon={faPencil} fixedWidth />
+                    </span>
+                    <div className="">Renommage de contacts</div>
+                  </div>
+                  <div className="mt-4 mb-3">Description...</div>
+                </div>
+              </Card.Body>
+            </Card>
+          </Link>
+        </div>
+      </div>
 
     </AdminLayout>
   )
