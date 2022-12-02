@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import {
-  Row, Col, Card, ListGroup, Button, Badge,
+  Row, Col, Card, ListGroup, Button, Badge, Form,
 } from 'react-bootstrap'
 import { ChtInstance } from '@prisma/client'
 import { faComputer, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -12,9 +12,12 @@ import { flash } from 'src/store/flashMessagesSlice'
 import { setCurrentInstance } from '../../store/chtInstanceSlice'
 import api from '../../helpers/api'
 import { toast } from 'react-toastify'
+import { useEffect, useState } from 'react'
 
-const ChtInstancePicker = () => {
+const ChtInstancesList = () => {
   const chtInstances = useSelector((state) => state.chtInstance.instances)
+  const [search, setSearch] = useState('')
+  const [filteredInstances, setFilteredInstances] = useState([])
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -35,13 +38,29 @@ const ChtInstancePicker = () => {
     }
   }
 
+  useEffect(() => {
+    setFilteredInstances(
+      chtInstances.filter(i => {
+          return !search ||
+            i.name.toLowerCase()
+              .search(search.toLowerCase()) >= 0
+        })
+    )
+  }, [search])
+
   return (
     <div className="py-4">
       <h4 className="mb-4">
         Selectionnez une instance :
       </h4>
 
-      <div className="my-3">
+      <div className="my-3 text-end">
+        <Form.Control
+            className='d-inline w-auto me-2'
+            type="text"
+            placeholder="Rechercher..."
+            onChange={(e) => setSearch(e.target.value)}
+          />
         <Link href="/cht-instances/create" passHref>
           <Button variant="primary">
             <FontAwesomeIcon icon={faPlus} />
@@ -52,7 +71,7 @@ const ChtInstancePicker = () => {
       </div>
 
       <Row xs={1} sm={2} md={2} lg={3} className="g-2">
-        {chtInstances.map((instance: ChtInstance) => (
+        {filteredInstances.map((instance: ChtInstance) => (
           <Col key={instance.id}>
             <Card>
               <Card.Body>
@@ -93,7 +112,7 @@ const ChtInstancePicker = () => {
                 >
                   Sélectionner
                 </Button>
-                <Button variant="danger" className="ms-1"
+                <Button variant="danger" className="ms-1 px-3"
                 onClick={() => deleteInstance(instance)}
                 >
                     <FontAwesomeIcon icon={faTrash} />
@@ -107,4 +126,4 @@ const ChtInstancePicker = () => {
   )
 }
 
-export default ChtInstancePicker
+export default ChtInstancesList
