@@ -48,11 +48,15 @@ const ChtInstancesList = () => {
     )
   }, [search])
 
+  useEffect(() => {
+    setFilteredInstances(chtInstances)
+  }, [chtInstances])
+
   return (
     <div className="py-4">
-      <h4 className="mb-4">
+      {/* <h4 className="mb-4">
         Selectionnez une instance :
-      </h4>
+      </h4> */}
 
       <div className="my-3 text-end">
         <Form.Control

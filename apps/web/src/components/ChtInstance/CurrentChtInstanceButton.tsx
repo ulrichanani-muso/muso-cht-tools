@@ -1,16 +1,17 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { Form } from 'react-bootstrap'
-import { ChtInstance } from '@prisma/client'
 import { useEffect, useState } from 'react'
 import { setCurrentInstance, setInstances } from '../../store/chtInstanceSlice'
 import api from '../../helpers/api'
+import Link from 'next/link'
+import { Button } from 'react-bootstrap'
+import environmentTypes from 'src/config/environmentTypes'
 
-const ChtInstanceSelectInput = () => {
+const CurrentChtInstanceButton = () => {
   const [, setLoading] = useState(false)
-
   const currentChtInstance = useSelector((state) => state.chtInstance.current)
-  const chtInstances = useSelector((state) => state.chtInstance.instances)
   const dispatch = useDispatch()
+
+  const envs = environmentTypes.reduce((acc, i) => ({ ...acc, [i.code]: i }), {})
 
   const fetchChtInstances = async () => {
     try {
@@ -26,14 +27,19 @@ const ChtInstanceSelectInput = () => {
 
   useEffect(() => {
     fetchChtInstances()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div className="d-flex">
-      <p className="my-auto">Instance&nbsp;:&nbsp;</p>
+      {currentChtInstance && <Link href="/">
+        <Button variant={envs[currentChtInstance.environment]?.colorVariant ?? 'info'}>
+            Instance&nbsp;:&nbsp;
+            <strong>{currentChtInstance.name}</strong>&nbsp;
+            ({currentChtInstance.environment})
+        </Button>
+      </Link>}
 
-      <Form.Select
+      {/* <Form.Select
         value={currentChtInstance?.id}
         onChange={(event) => {
           dispatch(setCurrentInstance(Number(event.target.value)))
@@ -45,9 +51,9 @@ const ChtInstanceSelectInput = () => {
             {instance.name}
           </option>
         ))}
-      </Form.Select>
+      </Form.Select> */}
     </div>
   )
 }
 
-export default ChtInstanceSelectInput
+export default CurrentChtInstanceButton

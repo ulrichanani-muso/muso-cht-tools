@@ -47,11 +47,6 @@ export default function AdminLayout({ children }: PropsWithChildren) {
     }
   }, [setIsShowSidebarMd])
 
-  // Setup axios auth header
-  // useEffect(() => {
-  //   axios.defaults.headers.common['Authorization'] = `Bearer ${getCookieToken()}`
-  // }, [])
-
   return (
     <Auth>
       <Head>
