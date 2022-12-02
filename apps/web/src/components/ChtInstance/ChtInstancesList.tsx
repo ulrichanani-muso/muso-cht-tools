@@ -33,8 +33,8 @@ const ChtInstancesList = () => {
       toast('Instance supprimée')
       router.reload()
     } catch (error) {
-      toast.error(`Une erreur s'est produite : \n${error?.message}`)
       console.error(error)
+      toast.error(`Une erreur s'est produite : \n${error?.message}`)
     }
   }
 

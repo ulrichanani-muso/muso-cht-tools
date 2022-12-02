@@ -38,8 +38,8 @@ const AddNewChtInstance = () => {
       dispatch(flash({ text: 'Nouvelle instance rajoutée !' }))
       await router.push('/')
     } catch (error) {
-      toast.error(`Une erreur s'est produite : \n${error?.message}`)
       console.error(error)
+      toast.error(`Une erreur s'est produite : \n${error?.message}`)
     } finally {
       setSubmiting(false)
     }
