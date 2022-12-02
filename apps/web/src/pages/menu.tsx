@@ -1,12 +1,20 @@
 import type { NextPage } from 'next'
 import { AdminLayout } from '@layout'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Card } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faBackspace, faPencil } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useSelector } from 'react-redux'
+import useChtInstance from 'src/hooks/useChtInstance'
 
 const Home: NextPage = () => {
+  const currentChtInstance = useChtInstance()
+
+  if (!currentChtInstance) {
+    return <div />
+  }
 
   return (
     <AdminLayout>

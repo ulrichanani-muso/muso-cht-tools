@@ -25,7 +25,9 @@ export const chtInstanceSlice = createSlice({
   initialState,
   reducers: {
     setCurrentInstance: (state, action: PayloadAction<number>) => {
-      state.current = state.instances.find((i) => i.id === action.payload) || null
+      const instance = state.instances.find((i) => i.id === action.payload) || null
+      localStorage.setItem('cht-utils.current-instance', instance?.id || '')
+      state.current = instance
     },
     setInstances: (state, action: PayloadAction<ChtInstance[]>) => {
       state.instances = action.payload

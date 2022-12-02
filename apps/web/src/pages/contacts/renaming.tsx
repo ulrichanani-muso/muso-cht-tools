@@ -1,7 +1,10 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import type { NextPage } from 'next'
 import { AdminLayout } from '@layout'
 import React, { useRef, useState } from 'react'
-import { Form, Button, Card, Spinner } from 'react-bootstrap'
+import {
+  Form, Button, Card, Spinner,
+} from 'react-bootstrap'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
@@ -12,38 +15,44 @@ import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import api from 'src/helpers/api'
+import useChtInstance from 'src/hooks/useChtInstance'
 
 const { Control: { Feedback } } = Form
 
 const ContactRenaming: NextPage = () => {
+  // const currentChtInstance = useSelector((state) => state.chtInstance.current)
+  const currentChtInstance = useChtInstance()
   const [submiting, setSubmiting] = useState(false)
-  const currentChtInstance = useSelector((state) => state.chtInstance.current)
   const fileRef = useRef()
 
   const router = useRouter()
   const dispatch = useDispatch()
 
+  if (!currentChtInstance) {
+    return <div />
+  }
+
   const validationSchema = Yup.object({
     fileop: Yup.mixed().required('File is required'),
-      // .test("fileSize", "Fichier trop volumineux", (value) => {
-      //   console.log(value)
-      //   if (!value?.length) return false // attachment is optional
-      //   return true
-      //   // return value[0].size <= 2000000
-      // }),
+    // .test("fileSize", "Fichier trop volumineux", (value) => {
+    //   console.log(value)
+    //   if (!value?.length) return false // attachment is optional
+    //   return true
+    //   // return value[0].size <= 2000000
+    // }),
   })
 
   const submitData = async (data) => {
     setSubmiting(true)
     try {
-      const body = new FormData();
-      body.append("fileop", fileRef.current.files[0]);
-      body.append("instanceId", currentChtInstance.id);
+      const body = new FormData()
+      body.append('fileop', fileRef.current.files[0])
+      body.append('instanceId', currentChtInstance.id)
 
       await api.post('/cht-instances', body, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
       dispatch(flash({ text: 'L\'opération a démarré !' }))
       await router.push('/')
@@ -70,7 +79,8 @@ const ContactRenaming: NextPage = () => {
         <div>
           <Link href="/menu">
             <Button className="px-3">
-              <FontAwesomeIcon icon={faArrowLeft} fixedWidth />{' '}
+              <FontAwesomeIcon icon={faArrowLeft} fixedWidth />
+              {' '}
               Retour
             </Button>
           </Link>
@@ -79,7 +89,7 @@ const ContactRenaming: NextPage = () => {
 
       <Card className="mb-4">
         <Card.Body className="py-3 d-flex justify-content-between align-items-start">
-            <div>
+          <div>
             <Form onSubmit={formik.handleSubmit}>
 
               <Form.Group className="mb-4" controlId="fileop">
@@ -102,9 +112,9 @@ const ContactRenaming: NextPage = () => {
                 Démarrer
               </Button>
             </Form>
-            </div>
+          </div>
         </Card.Body>
-    </Card>
+      </Card>
 
     </AdminLayout>
   )
