@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { Button } from 'react-bootstrap'
 import SidebarNav from './SidebarNav'
+import Image from 'next/image'
 
 export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
   const { isShow, isShowMd } = props
@@ -32,22 +33,13 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
       id="sidebar"
     >
       <div className="sidebar-brand d-none d-md-flex align-items-center justify-content-center">
-        <svg
-          className="sidebar-brand-full"
+        <Image
           width="118"
           height="46"
-        >
-          <title>CoreUI Logo</title>
-          <use xlinkHref="/assets/brand/coreui.svg#full" />
-        </svg>
-        <svg
-          className="sidebar-brand-narrow d-none"
-          width="46"
-          height="46"
-        >
-          <title>CoreUI Logo</title>
-          <use xlinkHref="/assets/brand/coreui.svg#signet" />
-        </svg>
+          className=""
+          src="/white_logo.webp"
+          alt="Logo"
+        />
       </div>
 
       <div className="sidebar-nav flex-fill">

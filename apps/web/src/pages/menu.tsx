@@ -1,16 +1,18 @@
 import type { NextPage } from 'next'
 import { AdminLayout } from '@layout'
 import React from 'react'
-import { Card } from 'react-bootstrap'
+import { Button, Card } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPencil } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faBackspace, faPencil } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 
 const Home: NextPage = () => {
 
   return (
     <AdminLayout>
-      <h3 className="mb-4">Menu</h3>
+      <div className="d-flex justify-content-between w-100">
+        <h3 className="mb-4">Menu</h3>
+      </div>
 
       <div className="row">
         <div className="col-sm-6 col-lg-4">

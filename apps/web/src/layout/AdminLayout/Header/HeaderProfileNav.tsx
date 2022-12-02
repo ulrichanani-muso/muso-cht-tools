@@ -3,18 +3,10 @@ import {
 } from 'react-bootstrap'
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faBell,
-  faCreditCard,
-  faEnvelopeOpen,
-  faFile,
-  faMessage,
-  faUser,
-} from '@fortawesome/free-regular-svg-icons'
 import { PropsWithChildren } from 'react'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
-  faGear, faListCheck, faLock, faPowerOff,
+  faPowerOff,
 } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
@@ -51,41 +43,8 @@ export default function HeaderProfileNav() {
           </div>
         </Dropdown.Toggle>
         <Dropdown.Menu className="pt-0">
-          <Dropdown.Header className="bg-light fw-bold rounded-top">Account</Dropdown.Header>
-          <Link href="/" passHref legacyBehavior>
-            <Dropdown.Item>
-              <ProfileDropdownItem icon={faBell}>
-                Updates
-                <Badge bg="info" className="ms-2">42</Badge>
-              </ProfileDropdownItem>
-            </Dropdown.Item>
-          </Link>
-          <Link href="/" passHref legacyBehavior>
-            <Dropdown.Item>
-              <ProfileDropdownItem icon={faEnvelopeOpen}>
-                Updates
-                <Badge bg="success" className="ms-2">42</Badge>
-              </ProfileDropdownItem>
-            </Dropdown.Item>
-          </Link>
-          <Link href="/" passHref legacyBehavior>
-            <Dropdown.Item>
-              <ProfileDropdownItem icon={faListCheck}>
-                Tasks
-                <Badge bg="danger" className="ms-2">42</Badge>
-              </ProfileDropdownItem>
-            </Dropdown.Item>
-          </Link>
-          <Link href="/" passHref legacyBehavior>
-            <Dropdown.Item>
-              <ProfileDropdownItem icon={faMessage}>
-                Messages
-                <Badge bg="warning" className="ms-2">42</Badge>
-              </ProfileDropdownItem>
-            </Dropdown.Item>
-          </Link>
 
-          <Dropdown.Header className="bg-light fw-bold">Settings</Dropdown.Header>
+          {/* <Dropdown.Header className="bg-light fw-bold">Settings</Dropdown.Header>
           <Link href="/" passHref legacyBehavior>
             <Dropdown.Item>
               <ProfileDropdownItem icon={faUser}>Profile</ProfileDropdownItem>
@@ -95,25 +54,10 @@ export default function HeaderProfileNav() {
             <Dropdown.Item>
               <ProfileDropdownItem icon={faGear}>Settings</ProfileDropdownItem>
             </Dropdown.Item>
-          </Link>
-          <Link href="/" passHref legacyBehavior>
-            <Dropdown.Item>
-              <ProfileDropdownItem icon={faCreditCard}>Payments</ProfileDropdownItem>
-            </Dropdown.Item>
-          </Link>
-          <Link href="/" passHref legacyBehavior>
-            <Dropdown.Item>
-              <ProfileDropdownItem icon={faFile}>Projects</ProfileDropdownItem>
-            </Dropdown.Item>
-          </Link>
+          </Link> */}
 
           <Dropdown.Divider />
 
-          <Link href="/" passHref legacyBehavior>
-            <Dropdown.Item>
-              <ProfileDropdownItem icon={faLock}>Lock Account</ProfileDropdownItem>
-            </Dropdown.Item>
-          </Link>
           {/* <Link
             href="#"
             passHref
@@ -125,7 +69,7 @@ export default function HeaderProfileNav() {
           > */}
           <Link href="/api/auth/signout" passHref legacyBehavior>
             <Dropdown.Item>
-              <ProfileDropdownItem icon={faPowerOff}>Logout</ProfileDropdownItem>
+              <ProfileDropdownItem icon={faPowerOff}>Se Déconnecter</ProfileDropdownItem>
             </Dropdown.Item>
           </Link>
         </Dropdown.Menu>
