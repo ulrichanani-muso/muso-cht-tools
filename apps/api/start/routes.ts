@@ -23,6 +23,8 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.get('me/profile', 'AuthController.profile')
   Route.resource('cht-instances', 'ChtInstancesController').apiOnly()
+  Route.get('rename/contact', 'RenamesController.getTemplate')
+  Route.post('rename/contact', 'RenamesController.processInputs')
 })
   .prefix('/api')
   .middleware(['auth'])
