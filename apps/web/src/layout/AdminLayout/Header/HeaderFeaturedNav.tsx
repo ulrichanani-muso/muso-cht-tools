@@ -1,12 +1,11 @@
-import Link from 'next/link'
 import { Nav } from 'react-bootstrap'
-import ChtInstanceSelectInput from 'src/components/ChtInstance/ChtInstanceSelectInput'
+import CurrentChtInstanceButton from 'src/components/ChtInstance/CurrentChtInstanceButton'
 
 export default function HeaderFeaturedNav() {
   return (
     <Nav>
       <Nav.Item>
-        <ChtInstanceSelectInput />
+        <CurrentChtInstanceButton />
       </Nav.Item>
     </Nav>
   )

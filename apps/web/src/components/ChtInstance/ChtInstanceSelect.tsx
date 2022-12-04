@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { setCurrentInstance, setInstances } from '../../store/chtInstanceSlice'
 import api from '../../helpers/api'
 
-const ChtInstanceSelectInput = () => {
+const ChtInstanceSelect = () => {
   const [, setLoading] = useState(false)
 
   const currentChtInstance = useSelector((state) => state.chtInstance.current)
@@ -26,7 +26,6 @@ const ChtInstanceSelectInput = () => {
 
   useEffect(() => {
     fetchChtInstances()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -50,4 +49,4 @@ const ChtInstanceSelectInput = () => {
   )
 }
 
-export default ChtInstanceSelectInput
+export default ChtInstanceSelect
