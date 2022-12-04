@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import ChtInstance from './ChtInstance'
+import Service from './Service'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -29,4 +30,7 @@ export default class User extends BaseModel {
 
   @hasMany(() => ChtInstance)
   public chtInstances: HasMany<typeof ChtInstance>
+
+  @hasMany(() => Service)
+  public services: HasMany<typeof Service>
 }
