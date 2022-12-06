@@ -126,7 +126,7 @@ const ContactRenaming: NextPage = () => {
             </Form.Group>
 
             <Row>
-              <Col sm={{ span: 8, offset: 4 }}>
+              <Col sm={{ span: 9, offset: 3 }}>
                 <Button variant="primary" type="submit" className="mt-3">
                   {submiting && <Spinner size="sm" animation="border" role="status" />}
                   {' '}

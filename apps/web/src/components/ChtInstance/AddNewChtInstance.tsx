@@ -191,11 +191,15 @@ const AddNewChtInstance = () => {
                 </Col>
               </Form.Group>
 
-              <Button variant="primary" type="submit" className="mt-3">
-                {submiting && <Spinner size="sm" animation="border" role="status" />}
-                {' '}
-                Ajouter
-              </Button>
+              <Row>
+                <Col sm={{ span: 9, offset: 3 }}>
+                  <Button variant="primary" type="submit" className="mt-3">
+                    {submiting && <Spinner size="sm" animation="border" role="status" />}
+                    {' '}
+                    Ajouter
+                  </Button>
+                </Col>
+              </Row>
             </Form>
           </div>
         </Card.Body>
