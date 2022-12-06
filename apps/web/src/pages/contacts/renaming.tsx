@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import { AdminLayout } from '@layout'
 import React, { useRef, useState } from 'react'
 import {
-  Form, Button, Card, Spinner,
+  Form, Button, Card, Spinner, Row, Col,
 } from 'react-bootstrap'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -33,7 +33,8 @@ const ContactRenaming: NextPage = () => {
   }
 
   const validationSchema = Yup.object({
-    fileop: Yup.mixed().required('File is required'),
+    description: Yup.string().required('Requis'),
+    fileop: Yup.mixed().required('Requis'),
     // .test("fileSize", "Fichier trop volumineux", (value) => {
     //   console.log(value)
     //   if (!value?.length) return false // attachment is optional
@@ -46,6 +47,7 @@ const ContactRenaming: NextPage = () => {
     setSubmiting(true)
     try {
       const body = new FormData()
+      body.append('description', data.description)
       body.append('fileop', fileRef.current.files[0])
       body.append('instanceId', currentChtInstance.id)
 
@@ -88,12 +90,12 @@ const ContactRenaming: NextPage = () => {
       </div>
 
       <Card className="mb-4">
-        <Card.Body className="py-3 d-flex justify-content-between align-items-start">
-          <div>
-            <Form onSubmit={formik.handleSubmit}>
+        <Card.Body className="py-3">
+          <Form onSubmit={formik.handleSubmit}>
 
-              <Form.Group className="mb-4" controlId="fileop">
-                <Form.Label>Ficher Excell :</Form.Label>
+            <Form.Group as={Row} className="mb-4" controlId="fileop">
+              <Form.Label column sm="4" className="text-start text-sm-end">Ficher Excell :</Form.Label>
+              <Col sm="8">
                 <Form.Control
                   ref={fileRef}
                   type="file"
@@ -104,15 +106,35 @@ const ContactRenaming: NextPage = () => {
                   {...formik.getFieldProps('fileop')}
                 />
                 <Feedback type="invalid">{formik.errors?.fileop}</Feedback>
-              </Form.Group>
+              </Col>
+            </Form.Group>
 
-              <Button variant="primary" type="submit" className="mt-3">
-                {submiting && <Spinner size="sm" animation="border" role="status" />}
-                {' '}
-                Démarrer
-              </Button>
-            </Form>
-          </div>
+            <Form.Group as={Row} className="mb-4" controlId="description">
+              <Form.Label column sm="4" className="text-start text-sm-end">Description :</Form.Label>
+              <Col sm="8">
+                <Form.Control
+                  as="textarea"
+                  rows="5"
+                  type="text"
+                  required
+                  placeholder="Description..."
+                  isInvalid={!!formik.errors?.description}
+                  {...formik.getFieldProps('description')}
+                />
+                <Feedback type="invalid">{formik.errors?.description}</Feedback>
+              </Col>
+            </Form.Group>
+
+            <Row>
+              <Col sm={{ span: 8, offset: 4 }}>
+                <Button variant="primary" type="submit" className="mt-3">
+                  {submiting && <Spinner size="sm" animation="border" role="status" />}
+                  {' '}
+                  Démarrer
+                </Button>
+              </Col>
+            </Row>
+          </Form>
         </Card.Body>
       </Card>
 
