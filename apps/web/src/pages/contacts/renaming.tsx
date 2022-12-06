@@ -7,7 +7,7 @@ import {
 } from 'react-bootstrap'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faDownload } from '@fortawesome/free-solid-svg-icons'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
 import { flash } from 'src/store/flashMessagesSlice'
@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import api from 'src/helpers/api'
 import useChtInstance from 'src/hooks/useChtInstance'
+import { downloadFile } from 'src/helpers/common'
 
 const { Control: { Feedback } } = Form
 
@@ -33,8 +34,8 @@ const ContactRenaming: NextPage = () => {
   }
 
   const validationSchema = Yup.object({
-    description: Yup.string().required('Requis'),
-    fileop: Yup.mixed().required('Requis'),
+    desc: Yup.string().required('Requis'),
+    renaming_file: Yup.mixed().required('Requis'),
     // .test("fileSize", "Fichier trop volumineux", (value) => {
     //   console.log(value)
     //   if (!value?.length) return false // attachment is optional
@@ -47,17 +48,17 @@ const ContactRenaming: NextPage = () => {
     setSubmiting(true)
     try {
       const body = new FormData()
-      body.append('description', data.description)
-      body.append('fileop', fileRef.current.files[0])
+      body.append('desc', data.desc)
+      body.append('renaming_file', fileRef.current.files[0])
       body.append('instanceId', currentChtInstance.id)
 
-      await api.post('/cht-instances', body, {
+      await api.post('/rename/contact', body, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       dispatch(flash({ text: 'L\'opération a démarré !' }))
-      await router.push('/')
+      await router.push('/menu')
     } catch (error) {
       console.error(error)
       toast.error(`Une erreur s'est produite : \n${error?.message}`)
@@ -74,6 +75,12 @@ const ContactRenaming: NextPage = () => {
     },
   })
 
+  const downloadTemplate = async (e) => {
+    const res = await api.get('/rename/contact', { responseType: 'arraybuffer' })
+
+    downloadFile(res.data, 'rename-contacts-template.xlsx')
+  }
+
   return (
     <AdminLayout>
       <div className="d-flex justify-content-between w-100">
@@ -89,11 +96,18 @@ const ContactRenaming: NextPage = () => {
         </div>
       </div>
 
+      <p className="text-end">
+        <a href="#!" onClick={downloadTemplate}>
+          <FontAwesomeIcon icon={faDownload} fixedWidth />
+          Télécharger le template de renommage.
+        </a>
+      </p>
+
       <Card className="mb-4">
         <Card.Body className="py-3">
           <Form onSubmit={formik.handleSubmit}>
 
-            <Form.Group as={Row} className="mb-4" controlId="fileop">
+            <Form.Group as={Row} className="mb-4" controlId="renaming_file">
               <Form.Label column sm="3" className="text-start text-sm-end">Ficher Excell :</Form.Label>
               <Col sm="9">
                 <Form.Control
@@ -102,14 +116,14 @@ const ContactRenaming: NextPage = () => {
                   accept=".xls,.xlsx"
                   required
                   placeholder="Ficher Excell"
-                  isInvalid={!!formik.errors?.fileop}
-                  {...formik.getFieldProps('fileop')}
+                  isInvalid={!!formik.errors?.renaming_file}
+                  {...formik.getFieldProps('renaming_file')}
                 />
-                <Feedback type="invalid">{formik.errors?.fileop}</Feedback>
+                <Feedback type="invalid">{formik.errors?.renaming_file}</Feedback>
               </Col>
             </Form.Group>
 
-            <Form.Group as={Row} className="mb-4" controlId="description">
+            <Form.Group as={Row} className="mb-4" controlId="desc">
               <Form.Label column sm="3" className="text-start text-sm-end">Description :</Form.Label>
               <Col sm="9">
                 <Form.Control
@@ -118,10 +132,10 @@ const ContactRenaming: NextPage = () => {
                   type="text"
                   required
                   placeholder="Description..."
-                  isInvalid={!!formik.errors?.description}
-                  {...formik.getFieldProps('description')}
+                  isInvalid={!!formik.errors?.desc}
+                  {...formik.getFieldProps('desc')}
                 />
-                <Feedback type="invalid">{formik.errors?.description}</Feedback>
+                <Feedback type="invalid">{formik.errors?.desc}</Feedback>
               </Col>
             </Form.Group>
 
