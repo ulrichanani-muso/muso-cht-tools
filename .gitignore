@@ -3,4 +3,3 @@ apps/.DS_Store
 apps/api/package-lock.json
 apps/api/package-lock.json
 .gitignore
-.gitignore

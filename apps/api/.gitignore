@@ -7,3 +7,4 @@ coverage
 tmp
 
 db.sqlite3
+workDir/xls/rename/contact/contacts.xlsx

@@ -1,3 +1,8 @@
 import chtInstancesTemplates from './cht-instances.json'
 
-export { chtInstancesTemplates }
+const config = {
+  chtInstancesTemplates,
+  apiUrl: process.env.NEXT_PUBLIC_API_URL,
+}
+
+export default config
