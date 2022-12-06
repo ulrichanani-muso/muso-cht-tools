@@ -94,8 +94,8 @@ const ContactRenaming: NextPage = () => {
           <Form onSubmit={formik.handleSubmit}>
 
             <Form.Group as={Row} className="mb-4" controlId="fileop">
-              <Form.Label column sm="4" className="text-start text-sm-end">Ficher Excell :</Form.Label>
-              <Col sm="8">
+              <Form.Label column sm="3" className="text-start text-sm-end">Ficher Excell :</Form.Label>
+              <Col sm="9">
                 <Form.Control
                   ref={fileRef}
                   type="file"
@@ -110,8 +110,8 @@ const ContactRenaming: NextPage = () => {
             </Form.Group>
 
             <Form.Group as={Row} className="mb-4" controlId="description">
-              <Form.Label column sm="4" className="text-start text-sm-end">Description :</Form.Label>
-              <Col sm="8">
+              <Form.Label column sm="3" className="text-start text-sm-end">Description :</Form.Label>
+              <Col sm="9">
                 <Form.Control
                   as="textarea"
                   rows="5"
