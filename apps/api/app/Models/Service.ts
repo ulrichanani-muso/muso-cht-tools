@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import ChtInstance from './ChtInstance'
+import Doc from './Doc'
 
 export default class Service extends BaseModel {
   @column({ isPrimary: true })
@@ -15,6 +16,9 @@ export default class Service extends BaseModel {
 
   @column()
   public running: boolean
+
+  @column()
+  public filePath: string
 
   @column.dateTime({ autoCreate: false })
   public startDate: DateTime
@@ -35,11 +39,11 @@ export default class Service extends BaseModel {
   public user: BelongsTo<typeof User>
 
   @column()
-  public progress: number
-
-  @column()
   public instanceId: number
 
   @belongsTo(() => ChtInstance)
   public chtInstance: BelongsTo<typeof ChtInstance>
+
+  @hasMany(() => Doc)
+  public doc: HasMany<typeof Doc>
 }
