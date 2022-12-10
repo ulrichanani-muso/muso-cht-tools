@@ -1,5 +1,5 @@
 import axios from 'axios'
-import config from '../config/config'
+import * as config from '../config/config'
 import { getCookieToken } from './auth'
 
 const api = axios.create({

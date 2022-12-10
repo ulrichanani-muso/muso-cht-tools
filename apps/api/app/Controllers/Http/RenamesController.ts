@@ -7,7 +7,6 @@ import ChtInstance from 'App/Models/ChtInstance'
 import Service from 'App/Models/Service'
 import Doc from 'App/Models/Doc'
 const { DateTime } = require('luxon')
-import Ws from 'App/Services/Ws'
 
 export default class RenamesController {
   public async getTemplate({ response }: HttpContextContract) {
@@ -17,8 +16,7 @@ export default class RenamesController {
   }
 
   public async initiateRenaming({ request, response, user }: HttpContextContract) {
-    Ws.boot()
-    const socketSessionId = 'renaming'
+    let jobInitialised: boolean = false
 
     console.log('Renaming.................Initiating')
     const { instanceId, desc } = request.body()
@@ -91,6 +89,15 @@ export default class RenamesController {
       const findWorkBook = new Excel.Workbook()
       await findWorkBook.xlsx.readFile(filePath)
       const findWorksheet = findWorkBook.getWorksheet(1)
+      job.progress = 0
+      job.save()
+      response.status(200).send({
+        instanceId: instanceId,
+        jobId: job.id,
+        msg: `Traitement du fichier initialisé avec succès!`,
+      })
+      jobInitialised = true
+
       for (let rowNumber = 2; rowNumber < findWorksheet.rowCount + 1; rowNumber++) {
         const row = findWorksheet.getRow(rowNumber)
         let isCompleted = false
@@ -131,34 +138,29 @@ export default class RenamesController {
         row.getCell(4).value = isCompleted ? 'Ok!' : 'NOk!'
         row.commit()
 
-        //progress via socket
-        Ws.io.on(socketSessionId, (socket) => {
-          socket.emit('renamingProgress', Math.ceil((100 * rowNumber) / findWorksheet.rowCount))
-        })
+        //progress
+        job.progress = Math.ceil((100 * rowNumber) / findWorksheet.rowCount)
+        job.save()
       }
+
       findWorkBook.xlsx.writeFile(filePath)
       job.endDate = DateTime.now()
+      job.pro = 100
       job.running = false
       job.save()
 
-      //progress via socket
-      Ws.io.on(socketSessionId, (socket) => {
-        socket.emit('renamingProgress', 100)
-      })
-
       console.log('Renaming.................Done')
-      response.status(200).send({
-        instanceId: instanceId,
-        jobId: job.id,
-        msg: `Fichier traité avec succès!`,
-      })
     } catch (error) {
-      job.delete()
-      console.log('Renaming.................Failed')
-      response.internalServerError({
-        error: `Une erreur s'est produite lors du traitement du fichier`,
-      })
-      return
+      if (jobInitialised) {
+        job.running = false
+        job.save()
+        console.log('Renaming.................Failed')
+      } else {
+        job.delete()
+        response.internalServerError({
+          error: `Une erreur s'est produite lors du traitement du fichier`,
+        })
+      }
     }
   }
 
@@ -192,7 +194,29 @@ export default class RenamesController {
       }
 
       response.download(service.filePath)
-      response.status(200).json({ msg: 'Fichier téléchargé avec succès!' })
+    } catch (error) {
+      console.log(error);
+      
+      response.internalServerError({
+        error: `Une erreur s'est produite lors du téléchargement du fichier`,
+      })
+      return
+    }
+  }
+
+  public async getRenamingProgress({ request, response, user }: HttpContextContract) {
+    try {
+      const { jobId } = request.params()
+      const service = await Service.query().where('id', jobId).first()
+
+      if (!service) {
+        response.forbidden({
+          error: `Une erreur s'est produite lors de la tentative de récupération de l'activité identifiée comme ${jobId}`,
+        })
+        return
+      }
+
+      response.status(200).json({progress:service.progress});
     } catch (error) {
       response.internalServerError({
         error: `Une erreur s'est produite lors du téléchargement du fichier`,

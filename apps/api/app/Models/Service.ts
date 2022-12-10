@@ -18,6 +18,9 @@ export default class Service extends BaseModel {
   public running: boolean
 
   @column()
+  public progress: number
+
+  @column()
   public filePath: string
 
   @column.dateTime({ autoCreate: false })

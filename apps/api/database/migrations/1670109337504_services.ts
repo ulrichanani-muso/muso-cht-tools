@@ -9,6 +9,7 @@ export default class extends BaseSchema {
 
       table.string('name')
       table.string('desc')
+      table.integer('progress')
       table.boolean('running')
       table.string('file_path')
       table.timestamp('start_date', { useTz: true })
