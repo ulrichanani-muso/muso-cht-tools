@@ -12,7 +12,6 @@ export default class RenamesController {
   public async getTemplate({ response }: HttpContextContract) {
     const filePath = path.join(__dirname, '../../../workDir/xls/rename/contact/template.xlsx')
     response.download(filePath)
-    response.status(200).json({ msg: 'Fichier téléchargé avec succès!' })
   }
 
   public async initiateRenaming({ request, response, user }: HttpContextContract) {
@@ -145,7 +144,7 @@ export default class RenamesController {
 
       findWorkBook.xlsx.writeFile(filePath)
       job.endDate = DateTime.now()
-      job.pro = 100
+      job.progress = 100
       job.running = false
       job.save()
 
@@ -154,8 +153,9 @@ export default class RenamesController {
       if (jobInitialised) {
         job.running = false
         job.save()
-        console.log('Renaming.................Failed')
+        console.log('Renaming.................Failed', error)
       } else {
+        console.log('Renaming.................Failed', error)
         job.delete()
         response.internalServerError({
           error: `Une erreur s'est produite lors du traitement du fichier`,
