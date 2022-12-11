@@ -52,16 +52,16 @@ const ContactRenaming: NextPage = () => {
       body.append('renaming_file', fileRef.current.files[0])
       body.append('instanceId', currentChtInstance.id)
 
-      await api.post('/rename/contact', body, {
+      const res = await api.post('/rename/contact', body, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       dispatch(flash({ text: 'L\'opération a démarré !' }))
-      await router.push('/menu')
+      router.push(`/contacts/renaming/${res.data.jobId}?instanceId=${res.data.instanceId}`)
     } catch (error) {
       console.error(error)
-      toast.error(`Une erreur s'est produite : \n${error?.message}`)
+      toast.error(`Une erreur s'est produite : \n${error?.response?.data?.error}`)
     } finally {
       setSubmiting(false)
     }
