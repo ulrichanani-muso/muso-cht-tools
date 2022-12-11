@@ -24,7 +24,10 @@ Route.group(() => {
   Route.get('me/profile', 'AuthController.profile')
   Route.resource('cht-instances', 'ChtInstancesController').apiOnly()
   Route.get('rename/contact', 'RenamesController.getTemplate')
-  Route.post('rename/contact', 'RenamesController.processInputs')
+  Route.post('rename/contact', 'RenamesController.initiateRenaming')
+  Route.get('rename/contact/result/:instanceId/:jobId', 'RenamesController.getRenamingResult')
+  Route.get('rename/contact/:instanceId/:jobId', 'RenamesController.getRenamingProgress')
 })
   .prefix('/api')
   .middleware(['auth'])
+  
