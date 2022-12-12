@@ -13,11 +13,13 @@ interface ChtInstance {
 interface ChtInstanceState {
   current: ChtInstance | null;
   instances: ChtInstance[];
+  allInstancesLoaded: boolean;
 }
 
 const initialState : ChtInstanceState = {
   current: null,
   instances: [],
+  allInstancesLoaded: false,
 }
 
 export const chtInstanceSlice = createSlice({
@@ -31,6 +33,7 @@ export const chtInstanceSlice = createSlice({
     },
     setInstances: (state, action: PayloadAction<ChtInstance[]>) => {
       state.instances = action.payload
+      state.allInstancesLoaded = true
     },
     unsetCurrentInstance: (state) => {
       state.current = null
@@ -38,7 +41,7 @@ export const chtInstanceSlice = createSlice({
   },
 })
 
-// export const currentInstance = (state: RootState) => state.chtInstance.current
+export const currentInstance = (state: RootState) => state.chtInstance.current
 
 export const {
   setCurrentInstance, unsetCurrentInstance, setInstances,

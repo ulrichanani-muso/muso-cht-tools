@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import type { NextPage } from 'next'
-import { AdminLayout } from '@layout'
 import React, { useRef, useState } from 'react'
 import {
   Form, Button, Card, Spinner, Row, Col,
@@ -12,26 +11,22 @@ import * as Yup from 'yup'
 import { useFormik } from 'formik'
 import { flash } from 'src/store/flashMessagesSlice'
 import { useRouter } from 'next/router'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import api from 'src/helpers/api'
 import useChtInstance from 'src/hooks/useChtInstance'
 import { downloadFile } from 'src/helpers/common'
+import ChtAdminLayout from '@layout/AdminLayout/ChtAdminLayout'
 
 const { Control: { Feedback } } = Form
 
 const ContactRenaming: NextPage = () => {
-  // const currentChtInstance = useSelector((state) => state.chtInstance.current)
-  const currentChtInstance = useChtInstance()
+  const [currentChtInstance] = useChtInstance()
   const [submiting, setSubmiting] = useState(false)
   const fileRef = useRef()
 
   const router = useRouter()
   const dispatch = useDispatch()
-
-  if (!currentChtInstance) {
-    return <div />
-  }
 
   const validationSchema = Yup.object({
     desc: Yup.string().required('Requis'),
@@ -82,7 +77,7 @@ const ContactRenaming: NextPage = () => {
   }
 
   return (
-    <AdminLayout>
+    <ChtAdminLayout>
       <div className="d-flex justify-content-between w-100">
         <h3 className="mb-4">Renommage de contacts</h3>
         <div>
@@ -152,7 +147,7 @@ const ContactRenaming: NextPage = () => {
         </Card.Body>
       </Card>
 
-    </AdminLayout>
+    </ChtAdminLayout>
   )
 }
 
