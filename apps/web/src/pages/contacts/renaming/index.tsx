@@ -63,7 +63,9 @@ const ContactRenaming: NextPage = () => {
   }
 
   const formik = useFormik({
-    initialValues: {},
+    initialValues: {
+      renaming_file: '',
+    },
     validationSchema,
     onSubmit: (values) => {
       submitData(values)
