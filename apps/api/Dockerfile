@@ -28,5 +28,6 @@ RUN \
   fi
 
 COPY --from=build-stage /app/build /app
+COPY --from=build-stage /app/workDir /app/workDir
 
 CMD ["npm", "run", "start"]

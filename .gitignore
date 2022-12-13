@@ -3,3 +3,4 @@ apps/.DS_Store
 .gitignore
 .env.app.*
 .env
+.~*.xlsx

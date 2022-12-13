@@ -127,6 +127,7 @@ export default class RenamesController {
               doc.save()
 
               if (!!doc) {
+                row.getCell(4).value = currentContact.name
                 currentContact.name = row.getCell(3).text
                 const putContactRet = await axios.put(URL, currentContact)
                 isCompleted = !!putContactRet
@@ -134,7 +135,7 @@ export default class RenamesController {
             }
           } catch (error) {}
         }
-        row.getCell(4).value = isCompleted ? 'Ok!' : 'NOk!'
+        row.getCell(5).value = isCompleted ? 'Ok!' : 'NOk!'
         row.commit()
 
         //progress
