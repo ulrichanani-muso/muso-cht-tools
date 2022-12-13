@@ -1,7 +1,5 @@
 apps/api/package-lock.json
 apps/.DS_Store
-apps/api/package-lock.json
-apps/api/package-lock.json
 .gitignore
-apps/api/package-lock.json
-apps/api/package-lock.json
+.env.app.*
+.env

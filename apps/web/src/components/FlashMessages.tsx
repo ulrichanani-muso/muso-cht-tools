@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { clearMessages } from 'src/store/flashMessagesSlice'
 
-export default function FlashMessages({ children }) {
+export default function FlashMessages({ children }: PropsWithChildren) {
   const messages = useSelector((state) => state.flashMessages.messages)
   const dispatch = useDispatch()
   const router = useRouter()

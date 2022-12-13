@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14.5
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      PGPASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_DATABASE}"
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    deploy:
+      replicas: 1
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.labels.cht_utils_db==true
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+    networks:
+      - app
+
+  web:
+    build:
+      context: ./apps/web
+    env_file:
+      - ./.env.app.web
+    ports:
+      - ${WEB_PORT}:${WEB_PORT}
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  api:
+    build:
+      context: ./apps/api
+    env_file:
+      - ./.env.app.api
+    # volumes:
+    #   - app_storage:/app/storage
+    ports:
+      - ${API_PORT}:3333
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+    networks:
+      - app
+
+volumes:
+  db_data:
+  redis_data:
+  app_storage:
+
+networks:
+  app:

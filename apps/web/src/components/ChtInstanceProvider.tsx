@@ -1,11 +1,11 @@
 import Spinner from 'react-bootstrap/Spinner'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { PropsWithChildren, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import api from 'src/helpers/api'
 import { setCurrentInstance, setInstances } from 'src/store/chtInstanceSlice'
 
-export default function ChtInstanceProvider({ children }) {
+export default function ChtInstanceProvider({ children }: PropsWithChildren) {
   const chtInstances = useSelector((state) => state.chtInstance.instances)
   const chtInstancesLoaded = useSelector((state) => state.chtInstance.allInstancesLoaded)
   const currentChtInstance = useSelector((state) => state.chtInstance.current)

@@ -22,6 +22,7 @@ export default Env.rules({
   DRIVE_DISK: Env.schema.enum(['local'] as const),
   NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
   DB_CONNECTION: Env.schema.string(),
+  DB_URL: Env.schema.string(),
   GOOGLE_CLIENT_ID: Env.schema.string(),
   GOOGLE_CLIENT_SECRET: Env.schema.string(),
   JWT_SECRET: Env.schema.string(),
