@@ -8,13 +8,13 @@ import Service from 'App/Models/Service'
 import Doc from 'App/Models/Doc'
 const { DateTime } = require('luxon')
 
-export default class RenamesController {
+export default class MovingsController {
   public async getTemplate({ response }: HttpContextContract) {
-    const filePath = path.join(__dirname, '../../../workDir/xls/contact/rename/template.xlsx')
+    const filePath = path.join(__dirname, '../../../workDir/xls/contact/move/template.xlsx')
     response.download(filePath)
   }
 
-  public async initiateRenaming({ request, response, user }: HttpContextContract) {
+  public async initiateMoving({ request, response, user }: HttpContextContract) {
     let jobInitialised: boolean = false
 
     console.log('Renaming.................Initiating')
