@@ -1,14 +1,38 @@
 [
     {
-        "code": "muso_mali_local",
-        "name": "Muso Mali - Local",
-        "url": "https://127.0.0.1:4050",
-        "environment": "local"
+        "code": "muso_mali_test",
+        "name": "Instance de test Muso-Mali",
+        "url": "https://upgrade-muso-mali.app.medicmobile.org",
+        "environment": "test"
     },
     {
         "code": "muso_mali_prod",
-        "name": "Muso Mali - Prod",
+        "name": "Instance de production Muso-Mali",
         "url": "https://muso-mali.app.medicmobile.org",
-        "environment": "prod"
+        "environment": "production"
+    },
+    {
+        "code": "muso_cdi_test",
+        "name": "Instance de test Muso-Cote d'Ivoire",
+        "url": "https://muso-cdi.dev.medicmobile.org",
+        "environment": "test"
+    },
+    {
+        "code": "muso_cdi_prod",
+        "name": "Instance de production Muso-Cote d'Ivoire",
+        "url": "https://muso-cdi.app.medicmobile.org",
+        "environment": "production"
+    },
+    {
+        "code": "asa_mali_test",
+        "name": "Instance de test ASA-Mali",
+        "url": "https://supervisor-moh-mali.dev.medicmobile.org",
+        "environment": "test"
+    },
+    {
+        "code": "asa_mali_prod",
+        "name": "Instance de production  ASA-Mali",
+        "url": "https://supervisor-moh-mali.app.medicmobile.org",
+        "environment": "production"
     }
 ]
