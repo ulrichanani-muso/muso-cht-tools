@@ -1,18 +1,16 @@
 import Link from 'next/link'
 import { Button } from 'react-bootstrap'
 import environmentTypes from 'src/config/environmentTypes'
+import useChtColor from 'src/hooks/useChtColor'
 import useChtInstance from 'src/hooks/useChtInstance'
 
 const CurrentChtInstanceButton = () => {
   const [currentChtInstance] = useChtInstance()
-
-  const envs = environmentTypes.reduce((acc, i) => ({ ...acc, [i.code]: i }), {})
-
   return (
     <div className="d-flex">
       {currentChtInstance && (
       <Link href="/">
-        <Button variant={envs[currentChtInstance.environment]?.colorVariant ?? 'info'}>
+        <Button variant="light">
           Instance&nbsp;:&nbsp;
           <strong>{currentChtInstance.name}</strong>
           &nbsp;

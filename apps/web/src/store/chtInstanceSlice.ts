@@ -7,6 +7,7 @@ interface ChtInstance {
   url: string;
   username: string;
   password: string;
+  environment: string;
 }
 
 // Define a type for the slice state

@@ -6,6 +6,8 @@ import HeaderFeaturedNav from '@layout/AdminLayout/Header/HeaderFeaturedNav'
 import HeaderNotificationNav from '@layout/AdminLayout/Header/HeaderNotificationNav'
 import HeaderProfileNav from '@layout/AdminLayout/Header/HeaderProfileNav'
 import { Button, Container } from 'react-bootstrap'
+import useChtInstance from 'src/hooks/useChtInstance'
+import useChtColor from 'src/hooks/useChtColor'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -14,9 +16,11 @@ type HeaderProps = {
 
 export default function Header(props: HeaderProps) {
   const { toggleSidebar, toggleSidebarMd } = props
+  const [chtInstance] = useChtInstance()
+  const [_, bgClasses] = useChtColor()
 
   return (
-    <header className="header sticky-top mb-4 p-2 border-bottom">
+    <header className={'header sticky-top mb-4 p-2 border-bottom ' + bgClasses}>
       <Container fluid className="header-navbar d-flex align-items-center">
         <Button
           variant="link"
