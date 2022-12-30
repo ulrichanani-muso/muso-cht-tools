@@ -21,7 +21,8 @@
     "./providers/AppProvider",
     "@adonisjs/core",
     "@adonisjs/lucid",
-    "adonis-lucid-soft-deletes"
+    "adonis-lucid-soft-deletes",
+    "adonis5-sentry"
   ],
   "aceProviders": [
     "@adonisjs/repl"

@@ -58,6 +58,7 @@
     "@adonisjs/lucid": "^18.3.0",
     "@adonisjs/repl": "^3.1.11",
     "adonis-lucid-soft-deletes": "^1.4.3",
+    "adonis5-sentry": "^3.1.0",
     "axios": "^0.27.2",
     "exceljs": "^4.3.0",
     "got": "^11.8.3",
