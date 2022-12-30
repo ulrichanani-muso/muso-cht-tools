@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasOne, HasOne } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
+import { SoftDeletes } from '@ioc:Adonis/Addons/LucidSoftDeletes'
+import { compose } from '@ioc:Adonis/Core/Helpers'
 
 export enum EnvironmentType {
   'production',
@@ -9,7 +11,7 @@ export enum EnvironmentType {
   'test'
 }
 
-export default class ChtInstance extends BaseModel {
+export default class ChtInstance extends compose(BaseModel, SoftDeletes) {
   @column({ isPrimary: true })
   public id: number
 
@@ -36,6 +38,9 @@ export default class ChtInstance extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @column.dateTime()
+  public deletedAt: DateTime | null
 
   @column()
   public userId: number
