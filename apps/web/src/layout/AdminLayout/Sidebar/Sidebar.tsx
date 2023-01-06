@@ -5,10 +5,12 @@ import classNames from 'classnames'
 import { Button } from 'react-bootstrap'
 import SidebarNav from './SidebarNav'
 import Image from 'next/image'
+import useChtColor from 'src/hooks/useChtColor'
 
 export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
   const { isShow, isShowMd } = props
   const [isNarrow, setIsNarrow] = useState(false)
+  const [colorVariant] = useChtColor()
 
   const toggleIsNarrow = () => {
     const newValue = !isNarrow
@@ -42,7 +44,7 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
         />
       </div>
 
-      <div className="sidebar-nav flex-fill">
+      <div className={`sidebar-nav flex-fill p-2 ${colorVariant ? 'border border-5 border-' + colorVariant : ''}`}>
         <SidebarNav />
       </div>
 

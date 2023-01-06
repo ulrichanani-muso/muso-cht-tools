@@ -63,9 +63,10 @@
     "got": "^11.8.3",
     "jsonwebtoken": "^8.5.1",
     "luxon": "^3.1.1",
+    "pg": "^8.8.0",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.21",
-    "sqlite3": "^5.1.2"
+    "sqlite3": "^5.1.4"
   }
 }

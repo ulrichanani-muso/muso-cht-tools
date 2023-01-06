@@ -1,7 +1,8 @@
 import { useSession } from 'next-auth/react'
+import { PropsWithChildren } from 'react'
 import Spinner from 'react-bootstrap/Spinner'
 
-export default function Auth({ children }) {
+export default function Auth({ children }: PropsWithChildren) {
   const { status } = useSession({ required: true })
 
   if (status === 'loading') {

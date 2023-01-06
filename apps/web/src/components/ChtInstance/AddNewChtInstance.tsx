@@ -70,6 +70,10 @@ const AddNewChtInstance = () => {
     if (selectedTemplate) {
       formik.setFieldValue('url', selectedTemplate.url)
       formik.setFieldValue('environment', selectedTemplate.environment)
+
+      if (!formik.values.name) {
+        formik.setFieldValue('name', selectedTemplate.name)
+      }
     }
   }, [template])
 
