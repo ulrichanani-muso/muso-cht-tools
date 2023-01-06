@@ -89,6 +89,8 @@ export default class RenamesController {
       await findWorkBook.xlsx.readFile(filePath)
       const findWorksheet = findWorkBook.getWorksheet(1)
       job.progress = 0
+      job.progress_label=`Fichier d'entrée ouvert avec succès!`
+
       job.save()
       response.status(200).send({
         instanceId: instanceId,
@@ -139,6 +141,7 @@ export default class RenamesController {
         row.commit()
 
         //progress
+        job.progress_label=`Fin de traitement de ${row.getCell(1).text} - ${row.getCell(2).text}!`
         job.progress = Math.ceil((100 * rowNumber) / findWorksheet.rowCount)
         job.save()
       }
@@ -146,6 +149,7 @@ export default class RenamesController {
       findWorkBook.xlsx.writeFile(filePath)
       job.endDate = DateTime.now()
       job.progress = 100
+      job.progress_label=`Opération de renommage finalisée!`
       job.running = false
       job.save()
 
@@ -217,7 +221,7 @@ export default class RenamesController {
         return
       }
 
-      response.status(200).json({progress:service.progress});
+      response.status(200).json({progress:service.progress, label: service.progress_label});
     } catch (error) {
       response.internalServerError({
         error: `Une erreur s'est produite lors du téléchargement du fichier`,
