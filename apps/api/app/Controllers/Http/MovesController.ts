@@ -14,7 +14,7 @@ const { execSync } = require('child_process')
 
 export default class MovesController {
   public async getTemplate({ response }: HttpContextContract) {
-    const filePath = path.join(__dirname, '../../../workDir/xls/contact/move/template.xlsx')
+    const filePath = path.join(__dirname, '../../../workDir/xls/move/contact/template.xlsx')
     response.download(filePath)
   }
 
