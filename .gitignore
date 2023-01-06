@@ -4,3 +4,6 @@ apps/.DS_Store
 .env.app.*
 .env
 .~*.xlsx
+apps/api/dev.db
+apps/api/package-lock.json
+apps/web/package-lock.json
