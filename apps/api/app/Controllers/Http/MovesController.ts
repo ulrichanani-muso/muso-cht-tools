@@ -21,7 +21,7 @@ export default class MovesController {
   public async initiateMoving({ request, response, user }: HttpContextContract) {
     let jobInitialised: boolean = false
 
-    console.log('Moving.................Initiating')
+    console.log('%c Moving.................Initiating', 'color:orange; background-color:blue')
     const { instanceId, desc } = request.body()
 
     //check upload file existance
@@ -132,23 +132,23 @@ export default class MovesController {
               fs.mkdirSync(workingDir, { recursive: true })
 
               //Moving part 1...
-              console.error(`>Storing: ${row.getCell(1).text}`)
+              console.log(`>Storing: ${row.getCell(1).text}`)
               const CHT_COMMAND_STORE = `cht --force --url=${protocole}//${instance.username}:${
                 instance.password
               }@${baseUrl}/ move-contacts -- --contacts=${row.getCell(1).text} --parent=${
                 row.getCell(3).text
               } --docDirectoryPath=${workingDir}`
               let childProcess = spawnSync(CHT_COMMAND_STORE, {shell: true})
-              console.log(`stdout: ${childProcess.toString()}`)
+              console.log(`stdout: ${childProcess.stdout.toString()}`)
 
               //Moving part 2...
-              console.error(`>Uploading: ${row.getCell(1).text}`)
+              console.log(`>Uploading: ${row.getCell(1).text}`)
               const CHT_COMMAND_UPLOAD = `cht --force --url=${protocole}//${instance.username}:${instance.password}@${baseUrl}/ upload-docs -- --docDirectoryPath=${workingDir}`
-              childProcess = spawnSync(CHT_COMMAND_UPLOAD, , {shell: true})
-              console.log(`stdout: ${childProcess.toString()}`)
+              childProcess = spawnSync(CHT_COMMAND_UPLOAD,{shell: true})
+              console.log(`stdout: ${childProcess.stdout.toString()}`)
 
               //Operation logs backup after operation
-              const logFile= childProcess.toString().match(/upload-docs\.\d+\.log\.json/)[0]
+              const logFile= childProcess.stdout.toString().match(/upload-docs\.\d+\.log\.json/)[0]
               const logData = fs.readFileSync(logFile, 'utf8');
               const doc = new Doc()
               await doc.fill({
@@ -161,6 +161,7 @@ export default class MovesController {
               //remove logfile 
               try {
                 fs.unlinkSync(logFile);
+                console.error(`Removed log file ${logFile}`);
               } catch (err) {
                 console.error(`Error deleting log file ${logFile}: ${err.message}, moving next...`);
               }
@@ -186,14 +187,14 @@ export default class MovesController {
       job.running = false
       job.save()
 
-      console.log('Moving.................Done')
+      console.log('%c Moving.................Done', 'color:orange; background-color:blue')
     } catch (error) {
       if (jobInitialised) {
         job.running = false
         job.save()
-        console.log('Moving.................Failed', error)
+        console.error('Moving.................Failed', error)
       } else {
-        console.log('Moving.................Failed', error)
+        console.error('Moving.................Failed', error)
         job.delete()
         response.internalServerError({
           error: `Une erreur s'est produite lors du traitement du fichier`,
