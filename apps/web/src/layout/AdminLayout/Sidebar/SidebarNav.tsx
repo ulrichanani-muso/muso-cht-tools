@@ -123,7 +123,8 @@ export default function SidebarNav() {
       </SidebarNavItem>
 
       <SidebarNavTitle>Contacts</SidebarNavTitle>
-      <SidebarNavItem icon={faPencil} href="/contacts/renaming">Renommage de contacts</SidebarNavItem>
+      <SidebarNavItem icon={faPencil} href="/contacts/rename">Renommage de contacts</SidebarNavItem>
+      <SidebarNavItem icon={faPencil} href="/contacts/move">Déplacement de contacts</SidebarNavItem>
 
 
       {/* <SidebarNavTitle>Components</SidebarNavTitle>
