@@ -10,7 +10,7 @@ import ChtInstance from 'App/Models/ChtInstance'
 import Service from 'App/Models/Service'
 import Doc from 'App/Models/Doc'
 const { DateTime } = require('luxon')
-const { execSync } = require('child_process')
+const { spawnSync } = require('child_process')
 
 export default class MovesController {
   public async getTemplate({ response }: HttpContextContract) {
@@ -105,6 +105,8 @@ export default class MovesController {
 
       const date = new Date()
       for (let rowNumber = 2; rowNumber < findWorksheet.rowCount + 1; rowNumber++) {
+        console.groupCollapsed(`Contact:${rowNumber}`)
+        console.time(`Contact:${rowNumber}`)
         const row = findWorksheet.getRow(rowNumber)
         let isCompleted = false
         if (!!row.getCell(1).text) {
@@ -136,13 +138,13 @@ export default class MovesController {
               }@${baseUrl}/ move-contacts -- --contacts=${row.getCell(1).text} --parent=${
                 row.getCell(3).text
               } --docDirectoryPath=${workingDir}`
-              let childProcess = execSync(CHT_COMMAND_STORE)
+              let childProcess = spawnSync(CHT_COMMAND_STORE, {shell: true})
               console.log(`stdout: ${childProcess.toString()}`)
 
               //Moving part 2...
               console.error(`>Uploading: ${row.getCell(1).text}`)
               const CHT_COMMAND_UPLOAD = `cht --force --url=${protocole}//${instance.username}:${instance.password}@${baseUrl}/ upload-docs -- --docDirectoryPath=${workingDir}`
-              childProcess = execSync(CHT_COMMAND_UPLOAD)
+              childProcess = spawnSync(CHT_COMMAND_UPLOAD, , {shell: true})
               console.log(`stdout: ${childProcess.toString()}`)
 
               //Operation logs backup after operation
@@ -173,6 +175,8 @@ export default class MovesController {
         job.progress_label=`Fin de traitement de ${row.getCell(1).text} - ${row.getCell(2).text}!`
         job.progress = Math.ceil((100 * rowNumber) / findWorksheet.rowCount)
         job.save()
+        console.timeEnd(`Contact:${rowNumber}`)
+        console.groupEnd();
       }
 
       findWorkBook.xlsx.writeFile(filePath)
