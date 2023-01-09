@@ -17,6 +17,7 @@ const ContactMoving: NextPage = () => {
   const currentChtInstance = useSelector((state) => state.chtInstance.current)
   const router = useRouter()
   const [progress, setProgress] = useState(0)
+  const [progressLabel, setProgressLabel] = useState('')
   const [checkedOnce, setCheckedOnce] = useState(false)
   const intervalId = useRef()
 
@@ -31,6 +32,7 @@ const ContactMoving: NextPage = () => {
   const checkProgress = async () => {
     const res = await api.get(`/move/contact/${instanceId}/${jobId}`)
     setProgress(res.data.progress)
+    setProgressLabel(res.data.label)
 
     if (!checkedOnce) {
       setCheckedOnce(true)
@@ -90,6 +92,7 @@ const ContactMoving: NextPage = () => {
           {(progress < 100 && checkedOnce) && (
           <div>
             <p>Opération en cours :</p>
+            <p>{progressLabel}</p>
             <ProgressBar now={progress} label={`${progress}%`} animated style={{ height: '20px' }} />
           </div>
           )}
