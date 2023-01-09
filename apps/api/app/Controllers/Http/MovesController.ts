@@ -93,101 +93,114 @@ export default class MovesController {
       await findWorkBook.xlsx.readFile(filePath)
       const findWorksheet = findWorkBook.getWorksheet(1)
       job.progress = 0
-      job.progress_label=`Fichier d'entrée ouvert avec succès!`
-
+      job.progress_label = `Fichier d'entrée ouvert avec succès!`
       job.save()
+      jobInitialised = true
+
+      new Promise(async () => {
+        try {
+          const date = new Date()
+          for (let rowNumber = 2; rowNumber < findWorksheet.rowCount + 1; rowNumber++) {
+            console.groupCollapsed(`Contact:${rowNumber}`)
+            console.time(`Contact:${rowNumber}`)
+            const row = findWorksheet.getRow(rowNumber)
+            let isCompleted = false
+            if (!!row.getCell(1).text) {
+              const URL = `${protocole}//${instance.username}:${
+                instance.password
+              }@${baseUrl}/medic/${row.getCell(1).text}`
+
+              let getContactRet: AxiosRequestConfig
+              try {
+                getContactRet = await axios.get(URL, {
+                  headers: {
+                    accept: 'application/json',
+                  },
+                })
+
+                const currentContact = getContactRet.data
+                if (!!currentContact.name) {
+                  const workingDir = `${path.dirname(filePath)}/${date
+                    .toISOString()
+                    .replace(/[^a-z0-9]/gi, '_')}/${instanceId}/${job.id}/move_contact/${
+                    row.getCell(1).text
+                  }`
+                  fs.mkdirSync(workingDir, { recursive: true })
+
+                  //Moving part 1...
+                  console.log(`>Storing: ${row.getCell(1).text}`)
+                  const CHT_COMMAND_STORE = `cht --force --url=${protocole}//${instance.username}:${
+                    instance.password
+                  }@${baseUrl}/ move-contacts -- --contacts=${row.getCell(1).text} --parent=${
+                    row.getCell(3).text
+                  } --docDirectoryPath=${workingDir}`
+                  let childProcess = spawnSync(CHT_COMMAND_STORE, { shell: true })
+                  console.log(`stdout: ${childProcess.stdout.toString()}`)
+
+                  //Moving part 2...
+                  console.log(`>Uploading: ${row.getCell(1).text}`)
+                  const CHT_COMMAND_UPLOAD = `cht --force --url=${protocole}//${instance.username}:${instance.password}@${baseUrl}/ upload-docs -- --docDirectoryPath=${workingDir}`
+                  childProcess = spawnSync(CHT_COMMAND_UPLOAD, { shell: true })
+                  console.log(`stdout: ${childProcess.stdout.toString()}`)
+
+                  //Operation logs backup after operation
+                  const logFile = childProcess.stdout
+                    .toString()
+                    .match(/upload-docs\.\d+\.log\.json/)[0]
+                  const logData = fs.readFileSync(logFile, 'utf8')
+                  const doc = new Doc()
+                  await doc.fill({
+                    key: currentContact._id,
+                    value: logData,
+                    service_id: job.id,
+                  })
+                  doc.service = job
+                  doc.save()
+                  //remove logfile
+                  try {
+                    fs.unlinkSync(logFile)
+                    console.error(`Removed log file ${logFile}`)
+                  } catch (err) {
+                    console.error(
+                      `Error deleting log file ${logFile}: ${err.message}, moving next...`
+                    )
+                  }
+                  isCompleted = true
+                }
+              } catch (error) {}
+            }
+            row.getCell(5).value = isCompleted ? 'Ok!' : 'NOk!'
+            row.commit()
+
+            //progress
+            job.progress_label = `Fin de traitement de ${row.getCell(1).text} - ${
+              row.getCell(2).text
+            }!`
+            job.progress = Math.ceil((100 * rowNumber) / findWorksheet.rowCount)
+            job.save()
+            console.timeEnd(`Contact:${rowNumber}`)
+            console.groupEnd()
+          }
+
+          findWorkBook.xlsx.writeFile(filePath)
+          job.endDate = DateTime.now()
+          job.progress = 100
+          job.progress_label = `Opération de deplacement finalisée!`
+          job.running = false
+          job.save()
+          console.log('%c Moving.................Done', 'color:orange; background-color:blue')
+        } catch (error) {
+          job.running = false
+          job.save()
+          console.error('Moving.................Failed', error)
+        }
+      })
+
       response.status(200).send({
         instanceId: instanceId,
         jobId: job.id,
         msg: `Traitement du fichier initialisé avec succès!`,
       })
-      jobInitialised = true
-
-      const date = new Date()
-      for (let rowNumber = 2; rowNumber < findWorksheet.rowCount + 1; rowNumber++) {
-        console.groupCollapsed(`Contact:${rowNumber}`)
-        console.time(`Contact:${rowNumber}`)
-        const row = findWorksheet.getRow(rowNumber)
-        let isCompleted = false
-        if (!!row.getCell(1).text) {
-          const URL = `${protocole}//${instance.username}:${instance.password}@${baseUrl}/medic/${
-            row.getCell(1).text
-          }`
-
-          let getContactRet: AxiosRequestConfig
-          try {
-            getContactRet = await axios.get(URL, {
-              headers: {
-                accept: 'application/json',
-              },
-            })
-
-            const currentContact = getContactRet.data
-            if (!!currentContact.name) {
-              const workingDir = `${path.dirname(filePath)}/${date
-                .toISOString()
-                .replace(/[^a-z0-9]/gi, '_')}/${instanceId}/${job.id}/move_contact/${
-                row.getCell(1).text
-              }`
-              fs.mkdirSync(workingDir, { recursive: true })
-
-              //Moving part 1...
-              console.log(`>Storing: ${row.getCell(1).text}`)
-              const CHT_COMMAND_STORE = `cht --force --url=${protocole}//${instance.username}:${
-                instance.password
-              }@${baseUrl}/ move-contacts -- --contacts=${row.getCell(1).text} --parent=${
-                row.getCell(3).text
-              } --docDirectoryPath=${workingDir}`
-              let childProcess = spawnSync(CHT_COMMAND_STORE, {shell: true})
-              console.log(`stdout: ${childProcess.stdout.toString()}`)
-
-              //Moving part 2...
-              console.log(`>Uploading: ${row.getCell(1).text}`)
-              const CHT_COMMAND_UPLOAD = `cht --force --url=${protocole}//${instance.username}:${instance.password}@${baseUrl}/ upload-docs -- --docDirectoryPath=${workingDir}`
-              childProcess = spawnSync(CHT_COMMAND_UPLOAD,{shell: true})
-              console.log(`stdout: ${childProcess.stdout.toString()}`)
-
-              //Operation logs backup after operation
-              const logFile= childProcess.stdout.toString().match(/upload-docs\.\d+\.log\.json/)[0]
-              const logData = fs.readFileSync(logFile, 'utf8');
-              const doc = new Doc()
-              await doc.fill({
-                key: currentContact._id,
-                value: logData,
-                service_id: job.id,
-              })
-              doc.service = job
-              doc.save() 
-              //remove logfile 
-              try {
-                fs.unlinkSync(logFile);
-                console.error(`Removed log file ${logFile}`);
-              } catch (err) {
-                console.error(`Error deleting log file ${logFile}: ${err.message}, moving next...`);
-              }
-              isCompleted = true
-            }
-          } catch (error) {}
-        }
-        row.getCell(5).value = isCompleted ? 'Ok!' : 'NOk!'
-        row.commit()
-
-        //progress
-        job.progress_label=`Fin de traitement de ${row.getCell(1).text} - ${row.getCell(2).text}!`
-        job.progress = Math.ceil((100 * rowNumber) / findWorksheet.rowCount)
-        job.save()
-        console.timeEnd(`Contact:${rowNumber}`)
-        console.groupEnd();
-      }
-
-      findWorkBook.xlsx.writeFile(filePath)
-      job.endDate = DateTime.now()
-      job.progress = 100
-      job.progress_label=`Opération de deplacement finalisée!`
-      job.running = false
-      job.save()
-
-      console.log('%c Moving.................Done', 'color:orange; background-color:blue')
     } catch (error) {
       if (jobInitialised) {
         job.running = false
@@ -255,7 +268,7 @@ export default class MovesController {
         return
       }
 
-      response.status(200).json({ progress: service.progress, label: service.progress_label})
+      response.status(200).json({ progress: service.progress, label: service.progress_label })
     } catch (error) {
       response.internalServerError({
         error: `Une erreur s'est produite lors du téléchargement du fichier`,

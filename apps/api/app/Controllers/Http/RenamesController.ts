@@ -89,71 +89,81 @@ export default class RenamesController {
       await findWorkBook.xlsx.readFile(filePath)
       const findWorksheet = findWorkBook.getWorksheet(1)
       job.progress = 0
-      job.progress_label=`Fichier d'entrée ouvert avec succès!`
-
+      job.progress_label = `Fichier d'entrée ouvert avec succès!`
       job.save()
+      jobInitialised = true
+
+      new Promise(async () => {
+        try {
+          for (let rowNumber = 2; rowNumber < findWorksheet.rowCount + 1; rowNumber++) {
+            const row = findWorksheet.getRow(rowNumber)
+            let isCompleted = false
+
+            if (!!row.getCell(1).text) {
+              const URL = `${protocole}//${instance.username}:${
+                instance.password
+              }@${baseUrl}/medic/${row.getCell(1).text}`
+
+              let getContactRet: AxiosRequestConfig
+              try {
+                getContactRet = await axios.get(URL, {
+                  headers: {
+                    accept: 'application/json',
+                  },
+                })
+
+                const currentContact = getContactRet.data
+                if (!!currentContact.name) {
+                  //backup before operation
+                  const doc = new Doc()
+                  await doc.fill({
+                    key: currentContact._id,
+                    value: currentContact,
+                    service_id: job.id,
+                  })
+                  doc.service = job
+                  doc.save()
+
+                  if (!!doc) {
+                    row.getCell(4).value = currentContact.name
+                    currentContact.name = row.getCell(3).text
+                    const putContactRet = await axios.put(URL, currentContact)
+                    isCompleted = !!putContactRet
+                  }
+                }
+              } catch (error) {}
+            }
+            row.getCell(5).value = isCompleted ? 'Ok!' : 'NOk!'
+            row.commit()
+
+            //progress
+            job.progress_label = `Fin de traitement de ${row.getCell(1).text} - ${
+              row.getCell(2).text
+            }!`
+            job.progress = Math.ceil((100 * rowNumber) / findWorksheet.rowCount)
+            job.save()
+          }
+
+          findWorkBook.xlsx.writeFile(filePath)
+          job.endDate = DateTime.now()
+          job.progress = 100
+          job.progress_label = `Opération de renommage finalisée!`
+          job.running = false
+          job.save()
+          console.log('Renaming.................Done')
+        } catch (error) {
+          job.running = false
+          job.save()
+          console.log('Renaming.................Failed', error)
+        }
+      })
+
       response.status(200).send({
         instanceId: instanceId,
         jobId: job.id,
         msg: `Traitement du fichier initialisé avec succès!`,
       })
-      jobInitialised = true
 
-      for (let rowNumber = 2; rowNumber < findWorksheet.rowCount + 1; rowNumber++) {
-        const row = findWorksheet.getRow(rowNumber)
-        let isCompleted = false
-
-        if (!!row.getCell(1).text) {
-          const URL = `${protocole}//${instance.username}:${instance.password}@${baseUrl}/medic/${
-            row.getCell(1).text
-          }`
-
-          let getContactRet: AxiosRequestConfig
-          try {
-            getContactRet = await axios.get(URL, {
-              headers: {
-                accept: 'application/json',
-              },
-            })
-
-            const currentContact = getContactRet.data
-            if (!!currentContact.name) {
-              //backup before operation
-              const doc = new Doc()
-              await doc.fill({
-                key: currentContact._id,
-                value: currentContact,
-                service_id: job.id,
-              })
-              doc.service = job
-              doc.save()
-
-              if (!!doc) {
-                row.getCell(4).value = currentContact.name
-                currentContact.name = row.getCell(3).text
-                const putContactRet = await axios.put(URL, currentContact)
-                isCompleted = !!putContactRet
-              }
-            }
-          } catch (error) {}
-        }
-        row.getCell(5).value = isCompleted ? 'Ok!' : 'NOk!'
-        row.commit()
-
-        //progress
-        job.progress_label=`Fin de traitement de ${row.getCell(1).text} - ${row.getCell(2).text}!`
-        job.progress = Math.ceil((100 * rowNumber) / findWorksheet.rowCount)
-        job.save()
-      }
-
-      findWorkBook.xlsx.writeFile(filePath)
-      job.endDate = DateTime.now()
-      job.progress = 100
-      job.progress_label=`Opération de renommage finalisée!`
-      job.running = false
-      job.save()
-
-      console.log('Renaming.................Done')
     } catch (error) {
       if (jobInitialised) {
         job.running = false
@@ -200,8 +210,8 @@ export default class RenamesController {
 
       response.download(service.filePath)
     } catch (error) {
-      console.log(error);
-      
+      console.log(error)
+
       response.internalServerError({
         error: `Une erreur s'est produite lors du téléchargement du fichier`,
       })
@@ -221,7 +231,7 @@ export default class RenamesController {
         return
       }
 
-      response.status(200).json({progress:service.progress, label: service.progress_label});
+      response.status(200).json({ progress: service.progress, label: service.progress_label })
     } catch (error) {
       response.internalServerError({
         error: `Une erreur s'est produite lors du téléchargement du fichier`,
