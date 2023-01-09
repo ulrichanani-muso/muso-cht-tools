@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import React from 'react'
 import { Card } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPencil } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightFromBracket, faPencil } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 import ChtAdminLayout from '@layout/AdminLayout/ChtAdminLayout'
 
@@ -37,7 +37,7 @@ const Home: NextPage = () => (
               <div>
                 <div className="fs-4 fw-semibold d-flex">
                   <span className="fs-4 me-2 fw-normal mt-1">
-                    <FontAwesomeIcon icon={faPencil} fixedWidth />
+                    <FontAwesomeIcon icon={faArrowRightFromBracket} fixedWidth />
                   </span>
                   <div className="">Déplacement de contacts</div>
                 </div>
