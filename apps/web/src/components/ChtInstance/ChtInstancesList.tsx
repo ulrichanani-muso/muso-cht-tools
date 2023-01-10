@@ -111,12 +111,13 @@ const ChtInstancesList = () => {
                     dispatch(flash({ text: `Instance ${instance.name} selectionnée` }))
                     router.push('/menu')
                   }}
+                  className="mt-1"
                 >
                   Sélectionner
                 </Button>
                 <Button
                   variant="danger"
-                  className="ms-1 px-3"
+                  className="mt-1 ms-1 px-3"
                   onClick={() => deleteInstance(instance)}
                 >
                   <FontAwesomeIcon icon={faTrash} />

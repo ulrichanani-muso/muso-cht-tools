@@ -53,7 +53,7 @@ const ContactRenaming: NextPage = () => {
         },
       })
       dispatch(flash({ text: 'L\'opération a démarré !' }))
-      router.push(`/contacts/renaming/${res.data.jobId}?instanceId=${res.data.instanceId}`)
+      router.push(`/contacts/rename/${res.data.jobId}?instanceId=${res.data.instanceId}`)
     } catch (error) {
       console.error(error)
       toast.error(`Une erreur s'est produite : \n${error?.response?.data?.error}`)

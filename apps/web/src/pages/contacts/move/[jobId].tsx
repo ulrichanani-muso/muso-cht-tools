@@ -13,24 +13,26 @@ import { useSelector } from 'react-redux'
 import api from 'src/helpers/api'
 import { downloadFile } from 'src/helpers/common'
 
-const ContactRenaming: NextPage = () => {
+const ContactMoving: NextPage = () => {
   const currentChtInstance = useSelector((state) => state.chtInstance.current)
   const router = useRouter()
   const [progress, setProgress] = useState(0)
+  const [progressLabel, setProgressLabel] = useState('')
   const [checkedOnce, setCheckedOnce] = useState(false)
   const intervalId = useRef()
 
   const { jobId, instanceId } = router.query
 
   const downloadResults = async () => {
-    const res = await api.get(`/rename/contact/result/${instanceId}/${jobId}`, { responseType: 'arraybuffer' })
+    const res = await api.get(`/move/contact/result/${instanceId}/${jobId}`, { responseType: 'arraybuffer' })
 
-    downloadFile(res.data, `rename-contacts-results-${jobId}.xlsx`)
+    downloadFile(res.data, `move-contacts-results-${jobId}.xlsx`)
   }
 
   const checkProgress = async () => {
-    const res = await api.get(`/rename/contact/${instanceId}/${jobId}`)
+    const res = await api.get(`/move/contact/${instanceId}/${jobId}`)
     setProgress(res.data.progress)
+    setProgressLabel(res.data.label)
 
     if (!checkedOnce) {
       setCheckedOnce(true)
@@ -90,6 +92,7 @@ const ContactRenaming: NextPage = () => {
           {(progress < 100 && checkedOnce) && (
           <div>
             <p>Opération en cours :</p>
+            <p>{progressLabel}</p>
             <ProgressBar now={progress} label={`${progress}%`} animated style={{ height: '20px' }} />
           </div>
           )}
@@ -111,4 +114,4 @@ const ContactRenaming: NextPage = () => {
   )
 }
 
-export default ContactRenaming
+export default ContactMoving

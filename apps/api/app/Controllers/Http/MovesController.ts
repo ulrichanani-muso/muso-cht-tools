@@ -1,32 +1,36 @@
+// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import path from 'path'
 import Excel from 'exceljs'
 import axios from 'axios'
+import fs from 'fs'
 import { AxiosRequestConfig, AxiosPromise } from 'axios'
 import ChtInstance from 'App/Models/ChtInstance'
 import Service from 'App/Models/Service'
 import Doc from 'App/Models/Doc'
 const { DateTime } = require('luxon')
+const { spawnSync } = require('child_process')
 
-export default class RenamesController {
+export default class MovesController {
   public async getTemplate({ response }: HttpContextContract) {
-    const filePath = path.join(__dirname, '../../../workDir/xls/contact/rename/template.xlsx')
+    const filePath = path.join(__dirname, '../../../workDir/xls/move/contact/template.xlsx')
     response.download(filePath)
   }
 
-  public async initiateRenaming({ request, response, user }: HttpContextContract) {
+  public async initiateMoving({ request, response, user }: HttpContextContract) {
     let jobInitialised: boolean = false
 
-    console.log('Renaming.................Initiating')
+    console.log('%c Moving.................Initiating', 'color:orange; background-color:blue')
     const { instanceId, desc } = request.body()
 
     //check upload file existance
-    const renaming_file = request.file('renaming_file')
-    if (!renaming_file) {
+    const moving_file = request.file('moving_file')
+    if (!moving_file) {
       response.status(500).json({ error: 'Fichier uploadé introuvable!' })
       return
     }
-    const filePath = renaming_file.tmpPath + ''
+    const filePath = moving_file.tmpPath + ''
 
     //Fetch instance
     const instance = await ChtInstance.query().where('id', instanceId).first()
@@ -48,21 +52,21 @@ export default class RenamesController {
     }
 
     const service = await Service.query()
-      .where('name', 'renaming')
+      .where('name', 'moving')
       .where('instance_id', instanceId)
       .where('running', true)
       .first()
 
     if (!!service) {
       response.forbidden({
-        error: `Non autorisé, une tâche de changement de nom initiée par ${user.name} est déjà en cours d'exécution sur cette instance CHT`,
+        error: `Non autorisé, une tâche de deplacement de contact initiée par ${user.name} est déjà en cours d'exécution sur cette instance CHT`,
       })
       return
     }
 
     //Initiating current job
     const job = await user.related('services').create({
-      name: 'renaming',
+      name: 'moving',
       desc: desc,
       running: true,
       filePath: filePath,
@@ -73,12 +77,12 @@ export default class RenamesController {
     try {
       if (!job) {
         response.internalServerError({
-          error: `Une erreur s'est produite lors de la tentative de lancement de la tâche de changement de nom`,
+          error: `Une erreur s'est produite lors de la tentative de lancement de la tâche de deplacement de contact`,
         })
         return
       }
 
-      //Compose renaming instance url
+      //Compose moving instance url
       const protocole = instance.url.toString().substring(0, instance.url.toString().indexOf('/'))
       let baseUrl = instance.url
         .toString()
@@ -95,10 +99,12 @@ export default class RenamesController {
 
       new Promise(async () => {
         try {
+          const date = new Date()
           for (let rowNumber = 2; rowNumber < findWorksheet.rowCount + 1; rowNumber++) {
+            console.groupCollapsed(`Contact:${rowNumber}`)
+            console.time(`Contact:${rowNumber}`)
             const row = findWorksheet.getRow(rowNumber)
             let isCompleted = false
-
             if (!!row.getCell(1).text) {
               const URL = `${protocole}//${instance.username}:${
                 instance.password
@@ -114,22 +120,52 @@ export default class RenamesController {
 
                 const currentContact = getContactRet.data
                 if (!!currentContact.name) {
-                  //backup before operation
+                  const workingDir = `${path.dirname(filePath)}/${date
+                    .toISOString()
+                    .replace(/[^a-z0-9]/gi, '_')}/${instanceId}/${job.id}/move_contact/${
+                    row.getCell(1).text
+                  }`
+                  fs.mkdirSync(workingDir, { recursive: true })
+
+                  //Moving part 1...
+                  console.log(`>Storing: ${row.getCell(1).text}`)
+                  const CHT_COMMAND_STORE = `cht --force --url=${protocole}//${instance.username}:${
+                    instance.password
+                  }@${baseUrl}/ move-contacts -- --contacts=${row.getCell(1).text} --parent=${
+                    row.getCell(3).text
+                  } --docDirectoryPath=${workingDir}`
+                  let childProcess = spawnSync(CHT_COMMAND_STORE, { shell: true })
+                  console.log(`stdout: ${childProcess.stdout.toString()}`)
+
+                  //Moving part 2...
+                  console.log(`>Uploading: ${row.getCell(1).text}`)
+                  const CHT_COMMAND_UPLOAD = `cht --force --url=${protocole}//${instance.username}:${instance.password}@${baseUrl}/ upload-docs -- --docDirectoryPath=${workingDir}`
+                  childProcess = spawnSync(CHT_COMMAND_UPLOAD, { shell: true })
+                  console.log(`stdout: ${childProcess.stdout.toString()}`)
+
+                  //Operation logs backup after operation
+                  const logFile = childProcess.stdout
+                    .toString()
+                    .match(/upload-docs\.\d+\.log\.json/)[0]
+                  const logData = fs.readFileSync(logFile, 'utf8')
                   const doc = new Doc()
                   await doc.fill({
                     key: currentContact._id,
-                    value: currentContact,
+                    value: logData,
                     service_id: job.id,
                   })
                   doc.service = job
                   doc.save()
-
-                  if (!!doc) {
-                    row.getCell(4).value = currentContact.name
-                    currentContact.name = row.getCell(3).text
-                    const putContactRet = await axios.put(URL, currentContact)
-                    isCompleted = !!putContactRet
+                  //remove logfile
+                  try {
+                    fs.unlinkSync(logFile)
+                    console.error(`Removed log file ${logFile}`)
+                  } catch (err) {
+                    console.error(
+                      `Error deleting log file ${logFile}: ${err.message}, moving next...`
+                    )
                   }
+                  isCompleted = true
                 }
               } catch (error) {}
             }
@@ -142,19 +178,21 @@ export default class RenamesController {
             }!`
             job.progress = Math.ceil((100 * rowNumber) / findWorksheet.rowCount)
             job.save()
+            console.timeEnd(`Contact:${rowNumber}`)
+            console.groupEnd()
           }
 
           findWorkBook.xlsx.writeFile(filePath)
           job.endDate = DateTime.now()
           job.progress = 100
-          job.progress_label = `Opération de renommage finalisée!`
+          job.progress_label = `Opération de deplacement finalisée!`
           job.running = false
           job.save()
-          console.log('Renaming.................Done')
+          console.log('%c Moving.................Done', 'color:orange; background-color:blue')
         } catch (error) {
           job.running = false
           job.save()
-          console.log('Renaming.................Failed', error)
+          console.error('Moving.................Failed', error)
         }
       })
 
@@ -163,14 +201,13 @@ export default class RenamesController {
         jobId: job.id,
         msg: `Traitement du fichier initialisé avec succès!`,
       })
-
     } catch (error) {
       if (jobInitialised) {
         job.running = false
         job.save()
-        console.log('Renaming.................Failed', error)
+        console.error('Moving.................Failed', error)
       } else {
-        console.log('Renaming.................Failed', error)
+        console.error('Moving.................Failed', error)
         job.delete()
         response.internalServerError({
           error: `Une erreur s'est produite lors du traitement du fichier`,
@@ -179,7 +216,7 @@ export default class RenamesController {
     }
   }
 
-  public async getRenamingResult({ request, response, user }: HttpContextContract) {
+  public async getMovingResult({ request, response, user }: HttpContextContract) {
     try {
       const { instanceId, jobId } = request.params()
 
@@ -203,7 +240,7 @@ export default class RenamesController {
 
       if (service.running) {
         response.forbidden({
-          error: `Non autorisé, la tâche de renommage est toujours en cours d'exécution sur cette instance CHT`,
+          error: `Non autorisé, la tâche de deplacement est toujours en cours d'exécution sur cette instance CHT`,
         })
         return
       }
@@ -219,7 +256,7 @@ export default class RenamesController {
     }
   }
 
-  public async getRenamingProgress({ request, response, user }: HttpContextContract) {
+  public async getMovingProgress({ request, response, user }: HttpContextContract) {
     try {
       const { jobId } = request.params()
       const service = await Service.query().where('id', jobId).first()
