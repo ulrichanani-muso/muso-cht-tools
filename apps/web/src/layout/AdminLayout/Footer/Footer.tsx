@@ -7,8 +7,7 @@ export default function Footer() {
   return (
     <footer className={'footer flex-column flex-md-row border-top d-flex align-items-center justify-content-between px-4 py-2 ' + bgClasses}>
       <div>
-        © 2022
-        Muso CHT Utils.
+        © 2022 Muso-DIF CHT Utils
       </div>
     </footer>
   )
